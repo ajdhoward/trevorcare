@@ -71,6 +71,12 @@ repo secrets.
 
 ## License & credits
 
-Private family project released as a template. Care-framework wording
-references UK statutes (Care Act 2014, Mental Capacity Act 2005, MHA
-s.17/s.117, CQC, UK GDPR). Sample data is fully synthetic.
+**Proprietary — All Rights Reserved** (see [LICENSE](./LICENSE)).
+This is not open-source software: viewing the repository grants no
+licence to copy, modify, redistribute, or build upon this code.
+Commercial licensing terms will be published when the project is
+released as a product.
+
+Care-framework wording references UK statutes (Care Act 2014, Mental
+Capacity Act 2005, MHA s.17/s.117, CQC, UK GDPR). Sample data is
+fully synthetic.

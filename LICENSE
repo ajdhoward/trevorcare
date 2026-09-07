@@ -1,0 +1,45 @@
+TrevorCare (family-care-hub)
+Copyright (c) 2026 TrevorCare contributors
+
+ALL RIGHTS RESERVED.
+
+This source code, together with its documentation, configuration, and
+associated assets (the "Software"), is the proprietary work product of
+the copyright holders and is protected by United Kingdom and
+international copyright, database, and trade secret laws.
+
+NO LICENCE IS GRANTED.
+
+Permission to view this repository on GitHub does not constitute a
+licence to use the Software. Without the prior express written
+permission of the copyright holders, no person or organisation may:
+
+  1. copy, reproduce, or redistribute the Software or any substantial
+     part of it;
+  2. modify, adapt, translate, or create derivative works from the
+     Software;
+  3. merge, sublicense, sell, or offer the Software (or derivatives)
+     as part of any product or service;
+  4. use the Software to train machine-learning models or to build a
+     competing care-records, care-management, or family-portal
+     product;
+  5. remove or obscure this notice, or any copyright, trademark, or
+     attribution notices contained within the Software.
+
+Forks and copies made through GitHub functionality remain fully
+subject to the terms of this notice.
+
+Commercial licensing, partnership, and product-enquiry terms will be
+published separately when the Software is released as a product.
+Until such release, all rights are retained by the copyright holders.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OF OR OTHER DEALINGS IN VIEWING OF THE
+SOFTWARE.
+
+SPDX-License-Identifier: LicenseRef-Proprietary
