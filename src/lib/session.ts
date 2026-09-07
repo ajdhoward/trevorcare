@@ -10,8 +10,8 @@
 export const SESSION_COOKIE = "care_session";
 export const SESSION_DAYS = 30;
 
-export const DEFAULT_PORTAL_PASSWORD = "demo-password"; // shown on-screen while active
-export const DEFAULT_SESSION_SECRET = "demo-session-secret::rotate-me";
+export const DEFAULT_PORTAL_PASSWORD = "demo"; // shown on-screen while active
+export const DEFAULT_SESSION_SECRET = "care-hub-demo-signing-key"; // replace via SESSION_SECRET in any real deployment
 
 function b64urlEncode(input: string): string {
   // JSON payload is ASCII-safe here ({e: number} + optional {n: name})

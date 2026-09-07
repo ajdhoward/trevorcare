@@ -125,8 +125,9 @@ function LoginForm() {
           Deployment: set <code className="rounded bg-teal-950 px-1">PORTAL_PASSWORD</code>,{" "}
           <code className="rounded bg-teal-950 px-1">SESSION_SECRET</code> and optionally{" "}
           <code className="rounded bg-teal-950 px-1">PORTAL_USERS</code> (name:pass pairs for
-          per-person accounts) as secrets — the demo fallback password is{" "}
-          <code className="rounded bg-teal-950 px-1">demo-password</code>.
+          per-person accounts) as secrets — until PORTAL_PASSWORD is set, the built-in demo
+          fallback password is{" "}
+          <code className="rounded bg-teal-950 px-1">demo</code>.
         </p>
       </div>
     </div>
