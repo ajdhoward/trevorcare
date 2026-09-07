@@ -79,3 +79,166 @@ model AiFeedback {
   status    String   @default("received") // received | applied | dismissed
   createdAt DateTime @default(now())
 }
+
+// ---------------------------------------------------------------------------
+// Batch 12 — multi-subject platform, vault, finances, wizards, integrations,
+// MCP research. All demo-seeded; no real personal data is ever committed.
+// ---------------------------------------------------------------------------
+
+// A service user ("care subject") — the person care is arranged FOR. The hub
+// supports any number of subjects (parent, sibling, neighbour…) so the same
+// deployment can serve any family. Seeded with two fictional demo subjects.
+model CareSubject {
+  id           String   @id @default(cuid())
+  displayName  String
+  relationship String   @default("") // free text, e.g. "my sister", "a neighbour"
+  setting      String   @default("home") // home | residential | supported-living
+  dateOfBirth  String   @default("")
+  nhsNumber    String   @default("")
+  address      String   @default("")
+  phone        String   @default("")
+  profile      String   @default("{}") // JSON SubjectProfile (health, prefs, contacts…)
+  sortOrder    Int      @default(0)
+  archived     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Data vault — uploaded documents stored server-side (base64 in SQLite; on
+// Cloudflare map to R2). Access-logged; downloads gated by the session gate.
+model VaultDocument {
+  id          String   @id @default(cuid())
+  subjectId   String   @default("")
+  title       String
+  category    String   @default("general") // passport | birth-certificate | lpa | court | care-contract | receipt | chat-export | letter | finance | medical | other
+  fileName    String
+  mimeType    String   @default("application/octet-stream")
+  size        Int      @default(0)
+  sensitivity String   @default("standard") // standard | sensitive | restricted
+  data        String   @default("") // base64 payload (cap ~8 MB)
+  textExtract String   @default("") // plain-text extraction for search/extraction
+  tags        String   @default("[]")
+  uploadedBy  String   @default("")
+  createdAt   DateTime @default(now())
+}
+
+// A candidate fact extracted from a vault document (passport MRZ, birth
+// certificate fields, AI chat transcripts…). Human-in-the-loop: nothing enters
+// the subject profile until it is confirmed in the review queue.
+model ExtractedFact {
+  id         String    @id @default(cuid())
+  subjectId  String    @default("")
+  documentId String    @default("")
+  key        String // e.g. passportNumber, dateOfBirth, medication
+  label      String
+  value      String
+  quote      String    @default("") // verbatim supporting quote from the source
+  confidence Float     @default(0.5)
+  status     String    @default("pending") // pending | confirmed | rejected
+  source     String    @default("") // passport-mrz | birth-certificate | chat-transcript | pattern | ai
+  createdAt  DateTime  @default(now())
+  decidedAt  DateTime?
+}
+
+// Finances — income & expenditure for the subject's affairs, with OPG
+// (Office of the Public Guardian) receipt register for deputyship/LPA reporting.
+model FinanceEntry {
+  id            String   @id @default(cuid())
+  subjectId     String   @default("")
+  date          String // YYYY-MM-DD
+  type          String // income | expense
+  category      String
+  description   String
+  amount        Float
+  receiptId     String   @default("") // linked VaultDocument id
+  opgReportable Boolean  @default(true)
+  notes         String   @default("")
+  createdBy     String   @default("")
+  createdAt     DateTime @default(now())
+}
+
+// Wizard framework — wizards are DATA, not code. Any wizard (including the
+// system "add a service user" flow) can be edited, reordered and extended in
+// the Wizard Studio without touching application code.
+model WizardDef {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  title       String
+  description String    @default("")
+  steps       String // JSON: [{ id, title, fields: [{ id, label, type, required, options, help, prefill }] }]
+  version     Int      @default(1)
+  system      Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+}
+
+// PIM integrations — Google / Apple / Microsoft personal information
+// management (calendar, contacts). OAuth client credentials are deployment
+// secrets (env); the store keeps status + tokens per provider.
+model PimIntegration {
+  id         String    @id @default(cuid())
+  provider   String // google | apple | microsoft
+  kind       String    @default("calendar") // calendar | contacts
+  status     String    @default("disconnected") // disconnected | connected | error
+  account    String    @default("")
+  config     String    @default("{}") // non-secret display config
+  token      String    @default("") // exchanged access token (deployment secret scope)
+  lastSyncAt DateTime?
+  lastResult String    @default("")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([provider, kind])
+}
+
+// MCP servers registered for the AI research engine (Model Context Protocol,
+// streamable-HTTP JSON-RPC). Built-in tools (web search, fetch) always exist.
+model McpServer {
+  id         String    @id @default(cuid())
+  name       String
+  url        String
+  headers    String    @default("{}") // JSON of header name → value (deployment secrets via env refs)
+  enabled    Boolean   @default(true)
+  tools      String    @default("[]") // cached tools/list result
+  lastTestAt DateTime?
+  lastResult String    @default("")
+  createdAt  DateTime  @default(now())
+}
+
+// One AI research run: question → tool calls → candidate claims, each with
+// verbatim source quotes. The validator re-fetches sources and checks quotes
+// before a claim can be accepted — drift/hallucination defence.
+model ResearchRun {
+  id         String    @id @default(cuid())
+  subjectId  String    @default("")
+  question   String
+  status     String    @default("queued") // queued | running | done | error
+  grounding  Float? // 0..1 validated share of claims
+  summary    String    @default("")
+  error      String    @default("")
+  log        String    @default("[]") // JSON tool-call trace (auditable)
+  createdAt  DateTime  @default(now())
+  finishedAt DateTime?
+}
+
+model ResearchClaim {
+  id         String   @id @default(cuid())
+  runId      String
+  text       String
+  sources    String   @default("[]") // JSON [{url, quote, verified, score}]
+  verdict    String   @default("unverified") // supported | unsupported | disputed
+  confidence Float    @default(0)
+  status     String   @default("pending") // pending | accepted | dismissed
+  createdAt  DateTime @default(now())
+}
+
+// Server-side sign-in audit (who signed in, when, from which IP prefix).
+model SigninLog {
+  id       String   @id @default(cuid())
+  username String
+  ok       Boolean
+  ip       String   @default("")
+  detail   String   @default("")
+  ts       DateTime @default(now())
+
+  @@index([ts])
+}

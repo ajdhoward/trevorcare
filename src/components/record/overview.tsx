@@ -290,7 +290,7 @@ export default function Overview({ record }: { record: CareRecord }) {
             </Badge>
           ))}
           <span className="w-full pt-1 text-xs text-muted-foreground">
-            Keyword scan across all carer notes — declin/refus = Dad declined an item, confus =
+            Keyword scan across all carer notes — declin/refus = declined an item, confus =
             possible confusion, hearing aid = aids not charged/fitted, nomad = medication pack
             issues. PRN doses: {stats.prnGiven.toLocaleString()} given,{" "}
             {stats.prnNot.toLocaleString()} not taken.

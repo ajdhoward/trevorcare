@@ -98,6 +98,22 @@ export default function Dashboard({
 
   return (
     <div className="space-y-4">
+      {/* staleness banner (CODE_REVIEW H10) — a frozen snapshot must not masquerade as live */}
+      {(() => {
+        const generated = record.generated;
+        if (!generated) return null;
+        const ageDays = Math.floor((Date.now() - new Date(generated + "T00:00:00").getTime()) / 86400000);
+        if (ageDays < 3) return null;
+        return (
+          <div className="flex flex-wrap items-center gap-2 rounded-lg border border-amber-400/50 bg-amber-950/25 p-2.5 text-xs text-amber-200 dark:text-amber-300" role="status">
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+            <span>
+              The care record snapshot is <strong>{ageDays} days old</strong> (generated {generated}). Time-based
+              panels and alerts may be out of date — re-import a fresh provider export to refresh.
+            </span>
+          </div>
+        );
+      })()}
       {/* greeting strip */}
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
@@ -105,7 +121,7 @@ export default function Dashboard({
             Good {greetingTime()}, {actor.name.split(" ")[0]}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {fmtDateRange(today)} · everything for both parents and your responsibilities, in one place.
+            {fmtDateRange(today)} · everything for everyone you support and your responsibilities, in one place.
           </p>
         </div>
         {overdueCount > 0 && (
@@ -162,9 +178,9 @@ export default function Dashboard({
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base text-teal-900 dark:text-teal-200">
                 <HeartPulse className="h-4 w-4 text-violet-600 dark:text-violet-300" />
-                Mum
+                {mum?.profile?.name ?? "Care-home person"}
                 <Badge variant="outline" className="ml-auto border-violet-200 bg-violet-50 text-violet-800 dark:border-violet-800 dark:bg-violet-950/50 dark:text-violet-200">
-                  Mum's care home
+                  Residential care
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -176,7 +192,7 @@ export default function Dashboard({
                   value={gapDays !== null ? `${gapDays}d` : "—"}
                   sub={lastContact ? lastContact.type : "log the first"}
                 />
-                <Metric label="Open tasks" value={String(mumTasksOpen.length)} sub="for Mum's care" />
+                <Metric label="Open tasks" value={String(mumTasksOpen.length)} sub="for residential care" />
               </div>
               <Separator />
               <div className="rounded-md border border-violet-200 bg-violet-50/60 px-2.5 py-2 text-xs text-violet-950 dark:border-violet-900 dark:bg-violet-950/40 dark:text-violet-200">

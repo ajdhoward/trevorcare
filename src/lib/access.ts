@@ -57,7 +57,20 @@ export type Permission =
   | "action.mum_log"
   | "action.share_manage"
   | "action.ingest"
-  | "action.legal_manage";
+  | "action.legal_manage"
+  | "view.legal"
+  | "view.finances"
+  | "view.vault"
+  | "view.integrations"
+  | "view.research"
+  | "view.wizards"
+  | "view.subjects"
+  | "action.subject_manage"
+  | "action.vault_manage"
+  | "action.finance_manage"
+  | "action.research_run"
+  | "action.integrations_manage"
+  | "action.wizards_manage";
 
 export const ROLES: Record<RoleId, RoleDef> = {
   admin: {
@@ -107,10 +120,14 @@ export const ALL_PERMISSIONS: Permission[] = [
   "view.familyvoice", "view.dcpi", "view.share", "view.life360", "view.aibrief",
   "view.council", "view.deploy", "view.kiosk",
   "view.calls", "view.carehub",
+  "view.legal", "view.finances", "view.vault", "view.integrations", "view.research",
+  "view.wizards", "view.subjects",
   "data.contacts", "data.documents",
   "action.export", "action.comms_edit", "action.alerts_manage", "action.users_manage", "action.ai_use",
   "action.task_manage", "action.availability", "action.wa_send", "action.mum_log",
   "action.share_manage", "action.ingest", "action.legal_manage",
+  "action.subject_manage", "action.vault_manage", "action.finance_manage",
+  "action.research_run", "action.integrations_manage", "action.wizards_manage",
 ];
 
 export const PERMISSION_LABELS: Record<Permission, string> = {
@@ -145,6 +162,13 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "view.kiosk": "'My Day' tablet view (Dad)",
   "view.calls": "Calls & evidence log (transcripts, highlights, contact spike)",
   "view.carehub": "Care Hub & legal (case file, statutory letters, handoff register)",
+  "view.legal": "Legal & LPA hub (instruments, attorneys, OPG, advance decisions)",
+  "view.finances": "Finances (income & expenditure, OPG receipts, deputyship report)",
+  "view.vault": "Data vault (documents, extraction & fact review)",
+  "view.integrations": "PIM integrations (Google / Apple / Microsoft calendar & contacts)",
+  "view.research": "AI research (MCP servers, validated research runs)",
+  "view.wizards": "Wizard studio (edit the guided-flow definitions)",
+  "view.subjects": "People we care for (service-user registry)",
   "data.contacts": "See contacts / next-of-kin details",
   "data.documents": "Open documents (care plan, risk assessments)",
   "action.export": "Download data & bundles",
@@ -159,6 +183,12 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "action.share_manage": "Create & revoke shared views",
   "action.ingest": "Apply AI feedback into the portal",
   "action.legal_manage": "Dispatch statutory letters & edit the handoff register",
+  "action.subject_manage": "Add, edit & archive service users (care subjects)",
+  "action.vault_manage": "Upload, extract & delete vault documents",
+  "action.finance_manage": "Record income & expenditure, attach OPG receipts",
+  "action.research_run": "Start AI research runs & accept validated findings",
+  "action.integrations_manage": "Connect & sync PIM integrations",
+  "action.wizards_manage": "Edit wizard definitions in the wizard studio",
 };
 
 const F = (p: Permission) => p;
@@ -174,10 +204,14 @@ export const ROLE_PERMISSIONS: Record<RoleId, Permission[]> = {
     "view.familyvoice", "view.dcpi", "view.share", "view.life360", "view.aibrief",
     "view.council", "view.deploy", "view.kiosk",
     "view.calls", "view.carehub",
+    "view.legal", "view.finances", "view.vault", "view.integrations", "view.research",
+    "view.subjects",
     "data.contacts", "data.documents",
     "action.export", "action.comms_edit", "action.alerts_manage", "action.ai_use",
     "action.task_manage", "action.availability", "action.wa_send", "action.mum_log",
     "action.share_manage", "action.ingest", "action.legal_manage",
+    "action.subject_manage", "action.vault_manage", "action.finance_manage",
+    "action.research_run", "action.integrations_manage",
   ],
   coordinator: [
     "view.overview", "view.visits", "view.medication", "view.wellbeing", "view.conditions",
@@ -197,7 +231,7 @@ export const ROLE_PERMISSIONS: Record<RoleId, Permission[]> = {
     "view.conditions", "view.recommendations", "view.records_audit", "view.social",
     "view.schedule", "view.documents", "view.alerts",
     "view.mytasks", "view.calendar", "view.council", "view.dcpi",
-    "view.calls", "view.carehub",
+    "view.calls", "view.carehub", "view.legal",
     "data.contacts", "data.documents",
     "action.export", "action.comms_edit",
   ],

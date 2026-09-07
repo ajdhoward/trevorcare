@@ -5,6 +5,7 @@
 // occurrence — add manual exceptions in the availability grid if needed.
 
 import { NextResponse } from "next/server";
+import { assertPublicUrl } from "@/lib/server/guard";
 
 export const dynamic = "force-dynamic";
 
@@ -84,9 +85,18 @@ export async function POST(req: Request) {
     if (!/^https:\/\/[^\s]+$/i.test(url)) {
       return NextResponse.json({ error: "Provide a full https:// calendar (ICS) URL." }, { status: 400 });
     }
+    // SSRF guard (CODE_REVIEW C4): private/reserved hosts are blocked
+    try {
+      assertPublicUrl(url);
+    } catch (e) {
+      return NextResponse.json(
+        { error: `URL rejected: ${e instanceof Error ? e.message : "invalid"}.` },
+        { status: 400 }
+      );
+    }
     let res: Response;
     try {
-      res = await fetch(url, { headers: { Accept: "text/calendar,text/plain,*/*" }, redirect: "follow" });
+      res = await fetch(url, { headers: { Accept: "text/calendar,text/plain,*/*" }, redirect: "follow", signal: AbortSignal.timeout(15_000) });
     } catch {
       return NextResponse.json({ error: "Could not reach that calendar URL (network/DNS)." }, { status: 502 });
     }

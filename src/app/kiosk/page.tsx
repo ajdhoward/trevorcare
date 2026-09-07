@@ -46,7 +46,7 @@ export default function KioskPage() {
     setChoices(next);
     kioskChoiceStore.save(next);
     logEvent({
-      actor: "Dad (My Day tablet)",
+      actor: "My Day tablet (kiosk)",
       actorRole: "Service user",
       action: "kiosk.choice",
       target: `${board}: ${choice}`,
@@ -69,9 +69,9 @@ export default function KioskPage() {
             <p className="text-xl font-semibold text-white/90 sm:text-2xl">
               {now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
             </p>
-            <p className="mt-1 text-3xl font-black text-white sm:text-4xl">Good day, Dad.</p>
+            <p className="mt-1 text-3xl font-black text-white sm:text-4xl">A very good day to you.</p>
           </div>
-          <Link href="/" className="rounded-lg border border-white/30 px-3 py-2 text-sm text-white/80 hover:bg-white/10" aria-label="Family portal (needs Alex's sign-in)">
+          <Link href="/" className="rounded-lg border border-white/30 px-3 py-2 text-sm text-white/80 hover:bg-white/10" aria-label="Family portal (needs the family's sign-in)">
             Family portal →
           </Link>
         </header>

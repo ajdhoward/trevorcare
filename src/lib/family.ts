@@ -533,6 +533,21 @@ const CONCERNS: { re: RegExp; theme: string; label: string }[] = [
   { re: /\bunwell|\bill|\btemperature|\bsick\b|\bhospital/i, theme: "unwell", label: "Unwell / hospital mentioned" },
 ];
 
+// Negation handling (CODE_REVIEW H2): a concern keyword inside the scope of a
+// negation ("did not fall", "no pain", "denies confusion", "pain free") must
+// NOT raise the flag. Checks a window before the match and the match itself.
+// Theme "declin" is EXEMPT — its own patterns are already negative behaviours
+// ("not eating", "refused meds") and must survive their own wording.
+const NEGATION_RE =
+  /\b(no|not|n't|never|without|denies|denied|no\s+signs?\s+of|free\s+from|free|resolved|settled|improved)\b/i;
+
+function negated(text: string, index: number, len: number): boolean {
+  const windowStart = Math.max(0, index - 42);
+  const before = text.slice(windowStart, index);
+  const after = text.slice(index, index + len + 24); // e.g. "pain free", "fell asleep"
+  return NEGATION_RE.test(before) || /\basleep\b|\bfest(ive)?\b|\bfree\b/i.test(after);
+}
+
 export function analyzeWaMessage(body: string): WaAnalysis {
   const text = body || "";
   const lower = text.toLowerCase();
@@ -558,7 +573,34 @@ export function analyzeWaMessage(body: string): WaAnalysis {
     }
   }
 
-  const concern = CONCERNS.find((c) => c.re.test(lower)) ?? null;
+  // negation-aware concern matching: find the first match that is not inside
+  // a negation scope (see negated() above)
+  let concern: WaAnalysis["concern"] = null;
+  for (const c of CONCERNS) {
+    const m = c.re.exec(lower);
+    if (!m) continue;
+    if (c.theme !== "declin" && negated(lower, m.index, m[0].length)) {
+      // keep scanning later occurrences before giving up on this theme
+      let found = false;
+      let rest = lower.slice(m.index + m[0].length);
+      let offset = m.index + m[0].length;
+      while (rest.length > 0) {
+        const m2 = c.re.exec(rest);
+        if (!m2) break;
+        if (!negated(lower, offset + m2.index, m2[0].length)) {
+          concern = c;
+          found = true;
+          break;
+        }
+        rest = rest.slice(m2.index + m2[0].length);
+        offset += m2.index + m2[0].length;
+      }
+      if (found) break;
+      continue;
+    }
+    concern = c;
+    break;
+  }
 
   let appointment: WaAnalysis["appointment"] = null;
   const dmy = text.match(/\b(\d{1,2})[\/\.-](\d{1,2})(?:[\/\.-](\d{2,4}))?\b/);

@@ -8,7 +8,7 @@
 
 import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
-import { HeartPulse, Loader2, Lock, Info } from "lucide-react";
+import { HeartPulse, Loader2, Lock, Info, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 function LoginForm() {
   const params = useSearchParams();
   const next = params.get("next") || "/";
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
@@ -29,7 +30,7 @@ function LoginForm() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, secure: window.location.protocol === "https:" }),
+        body: JSON.stringify({ username, password, secure: window.location.protocol === "https:" }),
       });
       const json = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
@@ -66,11 +67,27 @@ function LoginForm() {
 
       <form onSubmit={submit} className="space-y-3">
         <div>
+          <Label htmlFor="portal-username" className="text-teal-200">Your name or username</Label>
+          <Input
+            id="portal-username"
+            type="text"
+            autoFocus
+            autoComplete="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="mt-1.5 border-teal-800 bg-[#0a241e] text-teal-50 placeholder:text-teal-700"
+            placeholder="e.g. alex — recorded in the sign-in audit trail"
+          />
+          <p className="mt-1 text-[11px] text-teal-400/70">
+            Whoever is signing in adds their name here — it personalises the hub and is written to
+            the audit trail so the family can see who did what.
+          </p>
+        </div>
+        <div>
           <Label htmlFor="portal-password" className="text-teal-200">Portal password</Label>
           <Input
             id="portal-password"
             type="password"
-            autoFocus
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -93,7 +110,7 @@ function LoginForm() {
           disabled={busy || password.length === 0}
           className="w-full bg-teal-700 text-white hover:bg-teal-600"
         >
-          {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Lock className="mr-2 h-4 w-4" />}
+          {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : username ? <UserRound className="mr-2 h-4 w-4" /> : <Lock className="mr-2 h-4 w-4" />}
           Sign in
         </Button>
       </form>
@@ -105,9 +122,11 @@ function LoginForm() {
           in its own browser tab.
         </p>
         <p>
-          Deployment: set <code className="rounded bg-teal-950 px-1">PORTAL_PASSWORD</code> and{" "}
-          <code className="rounded bg-teal-950 px-1">SESSION_SECRET</code> as secrets — the demo
-          fallback password is <code className="rounded bg-teal-950 px-1">demo-password</code>.
+          Deployment: set <code className="rounded bg-teal-950 px-1">PORTAL_PASSWORD</code>,{" "}
+          <code className="rounded bg-teal-950 px-1">SESSION_SECRET</code> and optionally{" "}
+          <code className="rounded bg-teal-950 px-1">PORTAL_USERS</code> (name:pass pairs for
+          per-person accounts) as secrets — the demo fallback password is{" "}
+          <code className="rounded bg-teal-950 px-1">demo-password</code>.
         </p>
       </div>
     </div>

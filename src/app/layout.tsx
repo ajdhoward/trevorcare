@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Family Care Hub — Dad & Mum",
+  title: "Family Care Hub",
   description:
-    "Family-first care hub: monitor Dad at home (complete domiciliary care record) and Mum at Mum's care home — tasks, shopping lists, calendar, LPA duties with joint availability, WhatsApp group integration, email/phone protocols, alerts and audit trail.",
+    "Family-first care hub for the people you support — care records, visits, medication, tasks, documents vault, finances with OPG receipts, legal & LPA, AI research and full audit trail. Works for any relative: a parent, a sister, a neighbour.",
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },

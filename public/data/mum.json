@@ -1,99 +1,99 @@
 {
- "generated": "2026-09-07",
- "profile": {
-  "name": "Mum (sample)",
-  "relationship": "Mum (Dad's wife)",
-  "setting": "Residential care — Mum's care home (the care-home group)",
-  "portalAvailable": false,
-  "monitoringModel": "Sample: no portal exists on the home's side, so oversight runs on a structured email + phone protocol, a contact log and a family well-being tracker, connected through a dedicated WhatsApp group.",
-  "careHome": {
-   "name": "Mum's care home",
-   "operator": "the care-home operator",
-   "town": "Market Town",
-   "web": "",
-   "phone": "01632 960007",
-   "email": "",
-   "manager": "",
-   "address": "",
-   "fillNote": "Sample: complete from the admission pack locally — never commit real details."
+  "generated": "2026-09-07",
+  "profile": {
+    "name": "Robin Ellery",
+    "relationship": "Sample: the person in residential care",
+    "setting": "Residential care — Mum's care home (the care-home group)",
+    "portalAvailable": false,
+    "monitoringModel": "Sample: no portal exists on the home's side, so oversight runs on a structured email + phone protocol, a contact log and a family well-being tracker, connected through a dedicated WhatsApp group.",
+    "careHome": {
+      "name": "Mum's care home",
+      "operator": "the care-home operator",
+      "town": "Market Town",
+      "web": "",
+      "phone": "01632 960007",
+      "email": "",
+      "manager": "",
+      "address": "",
+      "fillNote": "Sample: complete from the admission pack locally — never commit real details."
+    },
+    "lpaNote": "Sample: LPA duties that touch Mum's affairs are tracked in the LPA & availability tab."
   },
-  "lpaNote": "Sample: LPA duties that touch Mum's affairs are tracked in the LPA & availability tab."
- },
- "protocol": {
-  "cadence": [
-   {
-    "freq": "Weekly",
-    "what": "Phone call to senior on duty",
-    "detail": "Same day/time each week; use the questions checklist; log the call with follow-ups."
-   },
-   {
-    "freq": "Monthly",
-    "what": "Written update request by email",
-    "detail": "Use the template below; log the response and any follow-ups."
-   },
-   {
-    "freq": "Quarterly",
-    "what": "Formal care-plan review meeting",
-    "detail": "Request minutes; compare against previous review (sample)."
-   }
+  "protocol": {
+    "cadence": [
+      {
+        "freq": "Weekly",
+        "what": "Phone call to senior on duty",
+        "detail": "Same day/time each week; use the questions checklist; log the call with follow-ups."
+      },
+      {
+        "freq": "Monthly",
+        "what": "Written update request by email",
+        "detail": "Use the template below; log the response and any follow-ups."
+      },
+      {
+        "freq": "Quarterly",
+        "what": "Formal care-plan review meeting",
+        "detail": "Request minutes; compare against previous review (sample)."
+      }
+    ],
+    "questionsChecklist": [
+      "How has Mum been this week — mood and engagement? (sample)",
+      "Any falls, skin concerns or changes in eating? (sample)",
+      "Any new medication or appointment to note? (sample)"
+    ],
+    "escalation": [
+      "1. Senior on duty — same-day phone conversation, logged.",
+      "2. Home manager — email with specifics and dates (template in Mum's tab).",
+      "3. Care-home group regional support — via the operator's contact route, referencing dates.",
+      "4. CQC — report a concern online if unresolved (sample)."
+    ],
+    "whatsappPlan": [
+      "Create the group 'Mum — family & care home' and invite the manager + key family members.",
+      "Pin a short communication-protocol message (weekly call day, who to contact, what counts as urgent)."
+    ]
+  },
+  "emailTemplates": [
+    {
+      "id": "monthly-update",
+      "title": "Monthly wellbeing update request",
+      "subject": "Mum — monthly family update request (sample)",
+      "body": "Dear [manager name],\n\nCould you please send us this month's written update for Mum? We're especially interested in mood, engagement, appetite and any falls or skin concerns.\n\nMany thanks,\nThe family (sample template)"
+    }
   ],
-  "questionsChecklist": [
-   "How has Mum been this week — mood and engagement? (sample)",
-   "Any falls, skin concerns or changes in eating? (sample)",
-   "Any new medication or appointment to note? (sample)"
+  "contacts": [
+    {
+      "name": "Senior on duty",
+      "role": "Care home",
+      "tel": "01632 960007",
+      "note": "Sample contact"
+    },
+    {
+      "name": "Alex (son)",
+      "role": "Family admin",
+      "tel": "07700 900000",
+      "note": "Sample contact"
+    }
   ],
-  "escalation": [
-   "1. Senior on duty — same-day phone conversation, logged.",
-   "2. Home manager — email with specifics and dates (template in Mum's tab).",
-   "3. Care-home group regional support — via the operator's contact route, referencing dates.",
-   "4. CQC — report a concern online if unresolved (sample)."
+  "wellbeing": [
+    {
+      "date": "2026-08-31",
+      "score": 4,
+      "note": "Sample: chatty and engaged at the family call."
+    },
+    {
+      "date": "2026-09-07",
+      "score": 3,
+      "note": "Sample: tired after a disturbed night."
+    }
   ],
-  "whatsappPlan": [
-   "Create the group 'Mum — family & care home' and invite the manager + key family members.",
-   "Pin a short communication-protocol message (weekly call day, who to contact, what counts as urgent)."
+  "logs": [
+    {
+      "date": "2026-08-31",
+      "type": "call",
+      "who": "Senior on duty",
+      "summary": "Sample log entry: monthly update received, no concerns raised.",
+      "followUp": ""
+    }
   ]
- },
- "emailTemplates": [
-  {
-   "id": "monthly-update",
-   "title": "Monthly wellbeing update request",
-   "subject": "Mum — monthly family update request (sample)",
-   "body": "Dear [manager name],\n\nCould you please send us this month's written update for Mum? We're especially interested in mood, engagement, appetite and any falls or skin concerns.\n\nMany thanks,\nThe family (sample template)"
-  }
- ],
- "contacts": [
-  {
-   "name": "Senior on duty",
-   "role": "Care home",
-   "tel": "01632 960007",
-   "note": "Sample contact"
-  },
-  {
-   "name": "Alex (son)",
-   "role": "Family admin",
-   "tel": "07700 900000",
-   "note": "Sample contact"
-  }
- ],
- "wellbeing": [
-  {
-   "date": "2026-08-31",
-   "score": 4,
-   "note": "Sample: chatty and engaged at the family call."
-  },
-  {
-   "date": "2026-09-07",
-   "score": 3,
-   "note": "Sample: tired after a disturbed night."
-  }
- ],
- "logs": [
-  {
-   "date": "2026-08-31",
-   "type": "call",
-   "who": "Senior on duty",
-   "summary": "Sample log entry: monthly update received, no concerns raised.",
-   "followUp": ""
-  }
- ]
 }

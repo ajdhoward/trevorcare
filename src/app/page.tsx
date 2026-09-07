@@ -47,6 +47,13 @@ import {
   PhoneCall,
   Gavel,
   LogOut,
+  UserRound,
+  UserPlus,
+  Wallet,
+  Lock,
+  CalendarCog,
+  Microscope,
+  Wand2,
 } from "lucide-react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -83,6 +90,19 @@ import Council from "@/components/record/council";
 import Deploy from "@/components/record/deploy";
 import Calls from "@/components/record/calls";
 import CareHub from "@/components/record/carehub";
+import SubjectProfilePanel from "@/components/record/subject-profile";
+import Legal from "@/components/record/legal";
+import Vault from "@/components/record/vault";
+import Finances from "@/components/record/finances";
+import Integrations from "@/components/record/integrations";
+import Research from "@/components/record/research";
+import WizardStudio from "@/components/record/wizard-studio";
+import { WizardEngine, useWizardLauncher } from "@/components/record/wizard-engine";
+import {
+  type CareSubjectRecord,
+  SETTING_LABELS,
+  initialsOf,
+} from "@/lib/subjects";
 import {
   type CallsData,
 } from "@/lib/calls";
@@ -125,7 +145,10 @@ import {
 
 type TabPerm = { id: string; label: string; icon: React.ReactNode; perm: Permission };
 
-const TAB_GROUPS: { label: string; tabs: TabPerm[] }[] = [
+// Static groups: everything that is NOT specific to one service user.
+// Per-subject groups (About/care tabs for each person) are appended at runtime
+// from the service-user registry — see tabGroups below.
+const STATIC_TAB_GROUPS: { label: string; tabs: TabPerm[] }[] = [
   {
     label: "Family hub",
     tabs: [
@@ -137,30 +160,50 @@ const TAB_GROUPS: { label: string; tabs: TabPerm[] }[] = [
     ],
   },
   {
-    label: "Dad (home care)",
+    label: "Legal & LPA",
     tabs: [
-      { id: "overview", label: "Overview", icon: <HeartPulse className="h-4 w-4" />, perm: "view.overview" },
-      { id: "visits", label: "Visits & Notes", icon: <CalendarCheck className="h-4 w-4" />, perm: "view.visits" },
-      { id: "medication", label: "Medication", icon: <Pill className="h-4 w-4" />, perm: "view.medication" },
-      { id: "watchlist", label: "Watch items", icon: <Eye className="h-4 w-4" />, perm: "view.watchlist" },
-      { id: "wellbeing", label: "Well-being", icon: <Activity className="h-4 w-4" />, perm: "view.wellbeing" },
-      { id: "conditions", label: "Conditions", icon: <Stethoscope className="h-4 w-4" />, perm: "view.conditions" },
-      { id: "schedule", label: "Schedule & package", icon: <CalendarDays className="h-4 w-4" />, perm: "view.schedule" },
-      { id: "documents", label: "Documents", icon: <FileText className="h-4 w-4" />, perm: "view.documents" },
-      { id: "kiosk", label: "My Day (his tablet)", icon: <MonitorSmartphone className="h-4 w-4" />, perm: "view.kiosk" },
+      { id: "legal", label: "Legal & LPA hub", icon: <Gavel className="h-4 w-4" />, perm: "view.legal" },
+      { id: "carehub", label: "Care Hub & case file", icon: <HeartHandshake className="h-4 w-4" />, perm: "view.carehub" },
     ],
   },
   {
-    label: "Mum's care home)",
+    label: "Council & social care",
     tabs: [
-      { id: "mum", label: "Mum's care", icon: <Building2 className="h-4 w-4" />, perm: "view.mum" },
+      { id: "council", label: "Council ASC watch", icon: <Landmark className="h-4 w-4" />, perm: "view.council" },
+      { id: "calls", label: "Calls & evidence", icon: <PhoneCall className="h-4 w-4" />, perm: "view.calls" },
+      { id: "social", label: "Social & comms", icon: <UsersRound className="h-4 w-4" />, perm: "view.social" },
+    ],
+  },
+  {
+    label: "Care provider",
+    tabs: [
+      { id: "whatsapp", label: "Provider inbox (WhatsApp)", icon: <MessageSquareText className="h-4 w-4" />, perm: "view.whatsapp" },
+      { id: "documents", label: "Provider documents", icon: <FileText className="h-4 w-4" />, perm: "view.documents" },
+    ],
+  },
+  {
+    label: "Wellbeing & voice",
+    tabs: [
+      { id: "familyvoice", label: "Family voice hub", icon: <HeartHandshake className="h-4 w-4" />, perm: "view.familyvoice" },
+      { id: "recommendations", label: "Recommendations", icon: <Lightbulb className="h-4 w-4" />, perm: "view.recommendations" },
+      { id: "dcpi", label: "Care index (DCPI)", icon: <Gauge className="h-4 w-4" />, perm: "view.dcpi" },
+    ],
+  },
+  {
+    label: "Finances",
+    tabs: [
+      { id: "finances", label: "Finances & OPG receipts", icon: <Wallet className="h-4 w-4" />, perm: "view.finances" },
+    ],
+  },
+  {
+    label: "Data vault",
+    tabs: [
+      { id: "vault", label: "Data vault & extraction", icon: <Lock className="h-4 w-4" />, perm: "view.vault" },
     ],
   },
   {
     label: "Connect",
     tabs: [
-      { id: "whatsapp", label: "WhatsApp & inbox", icon: <MessageSquareText className="h-4 w-4" />, perm: "view.whatsapp" },
-      { id: "calls", label: "Calls & evidence", icon: <PhoneCall className="h-4 w-4" />, perm: "view.calls" },
       { id: "share", label: "Share with advisers", icon: <Link2 className="h-4 w-4" />, perm: "view.share" },
       { id: "aibrief", label: "AI review bridge", icon: <Sparkles className="h-4 w-4" />, perm: "view.aibrief" },
     ],
@@ -168,19 +211,8 @@ const TAB_GROUPS: { label: string; tabs: TabPerm[] }[] = [
   {
     label: "Intelligence",
     tabs: [
-      { id: "familyvoice", label: "Family voice hub", icon: <HeartHandshake className="h-4 w-4" />, perm: "view.familyvoice" },
-      { id: "dcpi", label: "Care index (DCPI)", icon: <Gauge className="h-4 w-4" />, perm: "view.dcpi" },
-      { id: "recommendations", label: "Recommendations", icon: <Lightbulb className="h-4 w-4" />, perm: "view.recommendations" },
-    ],
-  },
-  {
-    label: "Oversight & assurance",
-    tabs: [
-      { id: "carehub", label: "Care Hub & legal", icon: <Gavel className="h-4 w-4" />, perm: "view.carehub" },
       { id: "alerts", label: "Alerts", icon: <Siren className="h-4 w-4" />, perm: "view.alerts" },
       { id: "audit", label: "Records audit", icon: <ShieldCheck className="h-4 w-4" />, perm: "view.records_audit" },
-      { id: "social", label: "Social & comms", icon: <UsersRound className="h-4 w-4" />, perm: "view.social" },
-      { id: "council", label: "Council ASC watch", icon: <Landmark className="h-4 w-4" />, perm: "view.council" },
       { id: "apicatalog", label: "API & data catalog", icon: <Database className="h-4 w-4" />, perm: "view.api_catalog" },
     ],
   },
@@ -188,14 +220,15 @@ const TAB_GROUPS: { label: string; tabs: TabPerm[] }[] = [
     label: "Workspace & tools",
     tabs: [
       { id: "assistant", label: "AI assistant", icon: <Bot className="h-4 w-4" />, perm: "view.ai" },
+      { id: "research", label: "AI research (MCP)", icon: <Microscope className="h-4 w-4" />, perm: "view.research" },
+      { id: "integrations", label: "Integrations (PIM)", icon: <CalendarCog className="h-4 w-4" />, perm: "view.integrations" },
+      { id: "wizards", label: "Wizard studio", icon: <Wand2 className="h-4 w-4" />, perm: "view.wizards" },
       { id: "downloads", label: "Downloads", icon: <Download className="h-4 w-4" />, perm: "view.downloads" },
       { id: "governance", label: "Access & audit", icon: <UserCog className="h-4 w-4" />, perm: "view.access_audit" },
       { id: "deploy", label: "Deploy & sync", icon: <Rocket className="h-4 w-4" />, perm: "view.deploy" },
     ],
   },
 ];
-
-const ALL_TABS: TabPerm[] = TAB_GROUPS.flatMap((g) => g.tabs);
 
 export default function Home() {
   const [record, setRecord] = useState<CareRecord | null>(null);
@@ -250,6 +283,26 @@ export default function Home() {
   const [medRecon, setMedRecon] = useState<MedReconStore>(defaultMedRecon());
   const [medExceptions, setMedExceptions] = useState<MedException[]>([]);
 
+  // batch-12: service-user registry — the people care is arranged FOR.
+  const [subjects, setSubjects] = useState<CareSubjectRecord[]>([]);
+  const refreshSubjects = useCallback(async () => {
+    try {
+      const res = await fetch("/api/subjects");
+      const json = (await res.json()) as { subjects?: CareSubjectRecord[] };
+      setSubjects(json.subjects ?? []);
+    } catch {
+      /* the registry stays empty on failure; static tabs still work */
+    }
+  }, []);
+
+  // page-level wizard (add a service user + friends) — the wizard definitions
+  // themselves live in the framework; see the Wizard studio tab.
+  const wizard = useWizardLauncher();
+
+  const addServiceUser = () => {
+    void wizard.launch("add-service-user");
+  };
+
   const actorRef = useRef<SystemUser | null>(null);
   actorRef.current = actor;
 
@@ -281,7 +334,8 @@ export default function Home() {
     setExits(loadExits());
     setMedRecon(loadMedRecon());
     setMedExceptions(loadMedExceptions());
-  }, []);
+    void refreshSubjects();
+  }, [refreshSubjects]);
 
   useEffect(() => {
     setDark(document.documentElement.classList.contains("dark"));
@@ -350,7 +404,7 @@ export default function Home() {
     setCurrentUserId(id);
     setActorId(id);
     const u = users.find((x) => x.id === id);
-    if (u && !can(u, (ALL_TABS.find((t) => t.id === tab)?.perm ?? "view.overview"))) {
+    if (u && !can(u, (allTabs.find((t) => t.id === tab)?.perm ?? "view.overview"))) {
       setTab("dashboard");
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -477,9 +531,98 @@ export default function Home() {
   }, [record, wellbeing, rules, alertState, tasks, mumContacts, callsData, exits]);
   const newAlerts = liveAlerts.filter((a) => a.status !== "resolved" && a.status !== "ack");
 
+  // ---- batch-12: per-subject navigation groups -----------------------------
+  // The first registered subject owns the main care-record tabs (the demo
+  // record.json); a residential subject maps to the residential-care panel;
+  // any subject added later gets its own group with a fresh blank record.
+  const primarySubjectId = subjects[0]?.id ?? "";
+  const residentialId = subjects.find((s) => s.setting === "residential")?.id ?? "";
+
+  const blankRecordFor = useCallback((name: string): CareRecord => {
+    return {
+      generated: new Date().toISOString().slice(0, 10),
+      client: {
+        name,
+        dob: "",
+        allergies: "Not recorded yet",
+        pharmacy: "",
+        gp: "",
+        knownAs: name,
+        address: "",
+        contacts: [],
+      },
+      hist: [],
+      upcoming: [],
+      med_daily: [],
+      med_events: [],
+      carers: [],
+      flags: [],
+      meds: [],
+      absences: [],
+      package: [],
+    };
+  }, []);
+
+  const blankRecords = useMemo(() => {
+    const map = new Map<string, CareRecord>();
+    for (const s of subjects) {
+      if (s.id !== primarySubjectId && s.id !== residentialId) {
+        map.set(s.id, blankRecordFor(s.displayName));
+      }
+    }
+    return map;
+  }, [subjects, primarySubjectId, residentialId, blankRecordFor]);
+
+  const tabGroups = useMemo(() => {
+    const groups: { label: string; tabs: TabPerm[] }[] = [];
+    const family = STATIC_TAB_GROUPS[0];
+    groups.push(family);
+    for (const s of subjects) {
+      const settingHint = SETTING_LABELS[s.setting] ? ` — ${SETTING_LABELS[s.setting].split(" — ")[0]}` : "";
+      const g: { label: string; tabs: TabPerm[] } = { label: `${s.displayName}${settingHint}`, tabs: [] };
+      g.tabs.push({
+        id: `about-${s.id}`,
+        label: `About ${s.displayName}`,
+        icon: <UserRound className="h-4 w-4" />,
+        perm: "view.subjects",
+      });
+      if (s.id === primarySubjectId) {
+        g.tabs.push(
+          { id: "overview", label: "Overview", icon: <HeartPulse className="h-4 w-4" />, perm: "view.overview" },
+          { id: "visits", label: "Visits & Notes", icon: <CalendarCheck className="h-4 w-4" />, perm: "view.visits" },
+          { id: "medication", label: "Medication", icon: <Pill className="h-4 w-4" />, perm: "view.medication" },
+          { id: "watchlist", label: "Watch items", icon: <Eye className="h-4 w-4" />, perm: "view.watchlist" },
+          { id: "wellbeing", label: "Well-being", icon: <Activity className="h-4 w-4" />, perm: "view.wellbeing" },
+          { id: "conditions", label: "Conditions", icon: <Stethoscope className="h-4 w-4" />, perm: "view.conditions" },
+          { id: "schedule", label: "Schedule & package", icon: <CalendarDays className="h-4 w-4" />, perm: "view.schedule" },
+          { id: "kiosk", label: "My Day (their tablet)", icon: <MonitorSmartphone className="h-4 w-4" />, perm: "view.kiosk" }
+        );
+      } else if (s.id === residentialId) {
+        g.tabs.push({
+          id: "mum",
+          label: `${s.displayName}'s care`,
+          icon: <Building2 className="h-4 w-4" />,
+          perm: "view.mum",
+        });
+      } else {
+        g.tabs.push(
+          { id: `s-${s.id}-overview`, label: "Overview", icon: <HeartPulse className="h-4 w-4" />, perm: "view.overview" },
+          { id: `s-${s.id}-visits`, label: "Visits & Notes", icon: <CalendarCheck className="h-4 w-4" />, perm: "view.visits" },
+          { id: `s-${s.id}-medication`, label: "Medication", icon: <Pill className="h-4 w-4" />, perm: "view.medication" },
+          { id: `s-${s.id}-schedule`, label: "Schedule & package", icon: <CalendarDays className="h-4 w-4" />, perm: "view.schedule" }
+        );
+      }
+      groups.push(g);
+    }
+    groups.push(...STATIC_TAB_GROUPS.slice(1));
+    return groups;
+  }, [subjects, primarySubjectId, residentialId]);
+
+  const allTabs = useMemo<TabPerm[]>(() => tabGroups.flatMap((g) => g.tabs), [tabGroups]);
+
   const visibleTabs = useMemo(
-    () => (actor ? ALL_TABS.filter((t) => can(actor, t.perm)) : []),
-    [actor]
+    () => (actor ? allTabs.filter((t) => can(actor, t.perm)) : []),
+    [actor, allTabs]
   );
 
   const medRefusedPerWeek = useMemo(() => {
@@ -490,7 +633,7 @@ export default function Home() {
 
   const NavList = ({ onPick }: { onPick?: () => void }) => (
     <nav aria-label="Portal sections" className="space-y-4">
-      {TAB_GROUPS.map((g) => {
+      {tabGroups.map((g) => {
         const tabs = g.tabs.filter((t) => visibleTabs.some((v) => v.id === t.id));
         if (tabs.length === 0) return null;
         return (
@@ -518,6 +661,16 @@ export default function Home() {
           </div>
         );
       })}
+      {actorRef.current && can(actorRef.current, "action.subject_manage") && (
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full"
+          onClick={() => { addServiceUser(); onPick?.(); }}
+        >
+          <UserPlus className="mr-2 h-4 w-4" /> Add a service user
+        </Button>
+      )}
     </nav>
   );
 
@@ -554,7 +707,9 @@ export default function Home() {
           </div>
           <div className="min-w-0">
             <h1 className="truncate text-sm font-bold leading-tight text-teal-900 dark:text-teal-100">Family Care Hub</h1>
-            <p className="truncate text-[10px] text-muted-foreground">Dad &amp; Mum first · {coverage}</p>
+            <p className="truncate text-[10px] text-muted-foreground">
+              {subjects.length > 0 ? `${subjects.length} person${subjects.length > 1 ? "s" : ""} supported · ${subjects.map((s) => s.displayName).join(", ")}` : "Loading people…"} · {coverage}
+            </p>
           </div>
         </div>
         <div className="flex-1">
@@ -577,7 +732,7 @@ export default function Home() {
             <div className="min-w-0 lg:hidden">
               <h1 className="truncate text-base font-bold leading-tight text-teal-900 dark:text-teal-100">Family Care Hub</h1>
               <p className="truncate text-[11px] text-muted-foreground">
-                Dad &amp; Mum first · acting as {actor.name}
+                {subjects.length > 0 ? `${subjects.length} person${subjects.length > 1 ? "s" : ""} supported` : "Family care hub"} · acting as {actor.name}
               </p>
             </div>
             <div className="ml-auto flex items-center gap-2">
@@ -746,7 +901,68 @@ export default function Home() {
               />
             </TabsContent>
 
-            {/* ---------------- dad's care record ---------------- */}
+            {/* ---------------- per-subject tabs (batch 12) ---------------- */}
+            {subjects.map((s) => (
+              <TabsContent key={`about-${s.id}`} value={`about-${s.id}`}>
+                <SubjectProfilePanel
+                  subject={s}
+                  canManage={can(actor, "action.subject_manage")}
+                  actorName={actor.name}
+                  onArchived={() => {
+                    void refreshSubjects();
+                    navigate("dashboard");
+                  }}
+                />
+              </TabsContent>
+            ))}
+            {[...blankRecords.entries()].map(([sid, blank]) => (
+              <TabsContent key={`s-${sid}`} value={`s-${sid}-overview`}>
+                <Overview record={blank} />
+              </TabsContent>
+            ))}
+            {[...blankRecords.entries()].map(([sid, blank]) => (
+              <TabsContent key={`s-${sid}-v`} value={`s-${sid}-visits`}>
+                <div className="space-y-3">
+                  <Visits record={blank} />
+                  <p className="text-xs text-muted-foreground">
+                    This person&apos;s visit history starts empty — it fills up as their provider exports are added.
+                    Documents and evidence go to the Data vault, money to Finances.
+                  </p>
+                </div>
+              </TabsContent>
+            ))}
+            {[...blankRecords.entries()].map(([sid, blank]) => (
+              <TabsContent key={`s-${sid}-m`} value={`s-${sid}-medication`}>
+                <Medication record={blank} />
+              </TabsContent>
+            ))}
+            {[...blankRecords.entries()].map(([sid, blank]) => (
+              <TabsContent key={`s-${sid}-sch`} value={`s-${sid}-schedule`}>
+                <Schedule record={blank} showContacts={can(actor, "data.contacts")} />
+              </TabsContent>
+            ))}
+
+            {/* ---------------- batch-12 sections ---------------- */}
+            <TabsContent value="legal">
+              <Legal subjects={subjects} canManage={can(actor, "action.legal_manage")} onLaunchWizard={(key) => void wizard.launch(key)} />
+            </TabsContent>
+            <TabsContent value="finances">
+              <Finances subjects={subjects} canManage={can(actor, "action.finance_manage")} actorName={actor.name} />
+            </TabsContent>
+            <TabsContent value="vault">
+              <Vault subjects={subjects} canManage={can(actor, "action.vault_manage")} />
+            </TabsContent>
+            <TabsContent value="integrations">
+              <Integrations subjects={subjects} />
+            </TabsContent>
+            <TabsContent value="research">
+              <Research subjects={subjects} canManage={can(actor, "action.research_run")} />
+            </TabsContent>
+            <TabsContent value="wizards">
+              <WizardStudio subjects={subjects} canManage={can(actor, "action.wizards_manage")} />
+            </TabsContent>
+
+            {/* ---------------- primary subject care record ---------------- */}
             <TabsContent value="overview">
               <Overview record={record} />
             </TabsContent>
@@ -964,12 +1180,42 @@ export default function Home() {
         {/* sticky footer */}
         <footer className="mt-auto border-t border-teal-100 bg-white/80 dark:border-teal-900 dark:bg-[#071a16]/80">
           <div className="mx-auto max-w-6xl px-4 py-3 text-center text-xs text-muted-foreground sm:px-6">
-            Family care hub for Dad — the care agency, the care portal portal export) and Mum —
-            Mum's care home, email/phone protocol) · the well-being of both parents and your convenience and control as
-            family lead shape every layout decision here · contains personal data — handle with care.
+            {subjects.length > 0
+              ? `Care hub for ${subjects.map((s) => s.displayName).join(" & ")} — shaped around the person, their family, their providers and their council.`
+              : "Family care hub"}{" "}
+            · every action audit-logged · contains personal data — handle with care.
           </div>
         </footer>
       </div>
+
+      {/* ---------------- page-level wizard dialog (batch 12) ---------------- */}
+      {wizard.def && wizard.open && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => wizard.setOpen(false)}>
+          <div className="max-h-[85vh] w-full max-w-lg overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="rounded-2xl border bg-card p-5 shadow-2xl">
+              <h2 className="text-base font-bold">{wizard.def.title}</h2>
+              <p className="mb-4 mt-1 text-xs text-muted-foreground">{wizard.def.description}</p>
+              <WizardEngine
+                def={wizard.def}
+                subjects={wizard.subjects}
+                onCancel={() => wizard.setOpen(false)}
+                onDone={(r) => {
+                  const wizardKey = wizard.def?.key ?? "";
+                  wizard.setOpen(false);
+                  if (r.data?.action === "create-subject") {
+                    const subj = r.data.subject as { id?: string; displayName?: string } | undefined;
+                    void refreshSubjects();
+                    if (subj?.id) navigate(`about-${subj.id}`);
+                    auditEvent("subject.created", subj?.displayName ?? "service user", `Added via the add-service-user wizard by ${actorRef.current?.name ?? "user"}`, "notice");
+                  } else {
+                    auditEvent("wizard.completed", wizardKey, r.message, "info");
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ---------------- mobile nav sheet ---------------- */}
       <Sheet open={navOpen} onOpenChange={setNavOpen}>

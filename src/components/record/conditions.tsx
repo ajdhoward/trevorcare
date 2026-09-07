@@ -20,6 +20,12 @@ import { type ConditionItem, type SectionsData } from "@/lib/record";
 
 const CATEGORIES = ["All", "Mental health", "Sensory", "Musculoskeletal", "Nutrition & immunity", "Cardiovascular & blood", "Urinary & renal", "Skin & circulation"];
 
+/** Data hygiene: list fields may arrive as prose strings from older exports. */
+function asList(v: string[] | string | undefined): string[] {
+  if (Array.isArray(v)) return v.filter(Boolean);
+  return typeof v === "string" && v.trim() ? [v] : [];
+}
+
 function Section({
   icon: Icon,
   title,
@@ -38,7 +44,7 @@ function Section({
         {title}
       </div>
       <ul className="space-y-1.5">
-        {items.map((t, i) => (
+        {asList(items).map((t, i) => (
           <li key={i} className="flex gap-2 text-[13px] leading-relaxed text-foreground/90">
             <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-40" />
             <span>{t}</span>
@@ -67,7 +73,7 @@ export default function Conditions({
     return conditions.filter((c) => {
       if (cat !== "All" && c.category !== cat) return false;
       if (!needle) return true;
-      const hay = [c.name, c.desc, c.source_note, ...c.meds, ...c.triggers, ...c.staff].join(" ").toLowerCase();
+      const hay = [c.name, c.desc, c.source_note, ...asList(c.meds), ...asList(c.triggers), ...asList(c.staff)].join(" ").toLowerCase();
       return hay.includes(needle);
     });
   }, [conditions, cat, q]);
@@ -155,10 +161,10 @@ export default function Conditions({
                   <Badge variant="outline" className="border-border text-[11px] text-muted-foreground">
                     {c.category}
                   </Badge>
-                  {c.meds.length > 0 && (
+                  {asList(c.meds).length > 0 && (
                     <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Pill className="h-3.5 w-3.5 text-teal-700" /> {c.meds.length} linked med
-                      {c.meds.length > 1 ? "s" : ""}
+                      <Pill className="h-3.5 w-3.5 text-teal-700" /> {asList(c.meds).length} linked med
+                      {asList(c.meds).length > 1 ? "s" : ""}
                     </span>
                   )}
                   <span className="ml-auto text-xs font-medium text-teal-700">
@@ -179,20 +185,30 @@ export default function Conditions({
                       <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-teal-800">
                         Evidence in this record
                       </div>
-                      <p className="mb-2 text-[13px] leading-relaxed text-foreground/85">{c.evidence.summary}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {c.evidence.stats.map((s, i) => (
-                          <span
-                            key={i}
-                            className="rounded-md border border-teal-200 bg-white px-2.5 py-1 text-xs"
-                          >
-                            <strong className="text-teal-900">{s.value}</strong>{" "}
-                            <span className="text-muted-foreground">{s.label}</span>
-                          </span>
-                        ))}
-                      </div>
+                      {typeof c.evidence === "object" && c.evidence !== null && c.evidence.summary ? (
+                        <>
+                          <p className="mb-2 text-[13px] leading-relaxed text-foreground/85">{c.evidence.summary}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {(c.evidence.stats ?? []).map((s, i) => (
+                              <span
+                                key={i}
+                                className="rounded-md border border-teal-200 bg-white px-2.5 py-1 text-xs"
+                              >
+                                <strong className="text-teal-900">{s.value}</strong>{" "}
+                                <span className="text-muted-foreground">{s.label}</span>
+                              </span>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          Cross-reference count: {String(c.evidence ?? 0)} matching entries in the record.
+                        </p>
+                      )}
                       <div className="mt-2 flex flex-wrap gap-1.5">
-                        {c.links.map((l, i) => (
+                        {(c.links ?? [])
+                          .filter((l): l is { tab: string; kw?: string; label: string } => !!l && typeof l === "object")
+                          .map((l, i) => (
                           <button
                             key={i}
                             onClick={() => onNavigate(l.tab, l.kw)}
@@ -205,9 +221,9 @@ export default function Conditions({
                       </div>
                     </div>
 
-                    {c.meds.length > 0 && (
+                    {asList(c.meds).length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
-                        {c.meds.map((m, i) => (
+                        {asList(c.meds).map((m, i) => (
                           <Badge key={i} variant="outline" className="border-teal-200 bg-white text-xs font-normal text-teal-900">
                             <Pill className="mr-1 h-3 w-3 text-teal-700" />
                             {m}
@@ -240,7 +256,7 @@ export default function Conditions({
                     <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
                       <FileText className="h-3.5 w-3.5 text-teal-700" />
                       Sources:
-                      {c.docs.map((d, i) => (
+                      {asList(c.docs).map((d, i) => (
                         <Badge key={i} variant="outline" className="bg-white text-[11px] font-normal">
                           {d}
                         </Badge>
@@ -272,7 +288,9 @@ export default function Conditions({
         <CardContent className="space-y-3">
           <div className="rounded-lg border border-violet-200 bg-violet-50/70 p-3">
             <div className="text-sm font-semibold text-violet-900">{sections.verdict_label}</div>
-            <p className="mt-1 text-[13px] leading-relaxed text-foreground/85">{sections.search_evidence}</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-foreground/85">
+              {Array.isArray(sections.search_evidence) ? sections.search_evidence.join(" ") : sections.search_evidence}
+            </p>
           </div>
           <div className="grid gap-3 lg:grid-cols-2">
             {[sections.s17, sections.s117].map((s) => (
@@ -280,14 +298,14 @@ export default function Conditions({
                 <div className="text-sm font-bold text-foreground">{s.title}</div>
                 <p className="mt-1.5 text-[13px] leading-relaxed text-foreground/85">{s.what}</p>
                 <p className="mt-2 rounded-md bg-violet-50/70 p-2 text-[13px] leading-relaxed text-violet-950">
-                  <strong>For Dad: </strong>
+                  <strong>Why it matters: </strong>
                   {s.relevance}
                 </p>
                 <div className="mt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   If circumstances change — watch for
                 </div>
                 <ul className="mt-1 space-y-1">
-                  {s.watch_for.map((w, i) => (
+                  {(Array.isArray(s.watch_for) ? s.watch_for : s.watch_for ? [s.watch_for] : []).map((w, i) => (
                     <li key={i} className="flex gap-2 text-[13px] leading-relaxed text-foreground/90">
                       <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-400" />
                       {w}

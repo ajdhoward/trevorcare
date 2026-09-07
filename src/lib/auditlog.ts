@@ -86,7 +86,26 @@ export type SysAuditAction =
   | "medrecon.flag.add"
   | "medrecon.flag.resolve"
   | "medrecon.export"
-  | "repo.push";
+  | "repo.push"
+  | "subject.created"
+  | "subject.updated"
+  | "subject.archived"
+  | "wizard.completed"
+  | "wizard.updated"
+  | "vault.upload"
+  | "vault.download"
+  | "vault.delete"
+  | "vault.extract"
+  | "fact.confirm"
+  | "fact.reject"
+  | "finance.entry.add"
+  | "finance.entry.delete"
+  | "research.run"
+  | "research.claim.decide"
+  | "integration.sync"
+  | "integration.connect"
+  | "mcp.server.add"
+  | "mcp.server.test";
 
 export interface SysAuditEvent {
   seq: number;
@@ -283,6 +302,25 @@ export const ACTION_LABELS: Record<SysAuditAction, string> = {
   "handoff.update": "Agency handoff updated",
   "tracker.update": "Tracker status/checklist updated",
   "tracker.exit.add": "Tracker exit event logged",
+  "subject.created": "Service user added",
+  "subject.updated": "Service user profile updated",
+  "subject.archived": "Service user archived",
+  "wizard.completed": "Guided wizard completed",
+  "wizard.updated": "Wizard definition edited",
+  "vault.upload": "Document stored in the data vault",
+  "vault.download": "Document downloaded from the vault",
+  "vault.delete": "Document removed from the vault",
+  "vault.extract": "Extraction run on a vault document",
+  "fact.confirm": "Extracted fact confirmed into the profile",
+  "fact.reject": "Extracted fact rejected",
+  "finance.entry.add": "Finance ledger entry recorded",
+  "finance.entry.delete": "Finance ledger entry deleted",
+  "research.run": "AI research run started",
+  "research.claim.decide": "Research claim accepted/dismissed",
+  "integration.sync": "PIM integration synchronised",
+  "integration.connect": "PIM integration connected/disconnected",
+  "mcp.server.add": "MCP server registered",
+  "mcp.server.test": "MCP server handshake tested",
   "tracker.exit.delete": "Tracker exit event removed",
   "medrecon.flag.add": "Medication exception flag logged",
   "medrecon.flag.resolve": "Medication exception flag updated",

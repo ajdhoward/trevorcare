@@ -10,6 +10,7 @@
 // with engine mode "worker" — this route then becomes optional.
 
 import { NextResponse } from "next/server";
+import { assertPublicUrl } from "@/lib/server/guard";
 
 export const runtime = "nodejs";
 
@@ -64,6 +65,19 @@ export async function POST(req: Request) {
   }
 
   const provider = body.provider || "openai";
+  // SSRF guard (CODE_REVIEW C4): the openai-compatible base URL is
+  // user-supplied — validate it BEFORE anything else, so a private host is
+  // rejected regardless of the rest of the payload.
+  if (provider === "openai-compatible") {
+    const candidate = (body.baseUrl || "").trim().replace(/\/+$/, "");
+    if (candidate) {
+      try {
+        assertPublicUrl(candidate);
+      } catch (e) {
+        return err(`Base URL rejected: ${e instanceof Error ? e.message : "invalid"}`, 400);
+      }
+    }
+  }
   const messages = Array.isArray(body.messages) ? body.messages : [];
   if (messages.length === 0) return err("No messages supplied.");
   const temperature = typeof body.temperature === "number" ? body.temperature : 0.3;
@@ -86,6 +100,13 @@ export async function POST(req: Request) {
           ? "https://api.openai.com/v1"
           : (body.baseUrl || "").trim().replace(/\/+$/, "");
       if (!base) return err("Base URL is required for OpenAI-compatible providers.", 400, "e.g. https://api.groq.com/openai/v1");
+      // SSRF guard (CODE_REVIEW C4): the base URL is user-supplied — block
+      // private/reserved hosts before it is ever fetched.
+      try {
+        assertPublicUrl(base);
+      } catch (e) {
+        return err(`Base URL rejected: ${e instanceof Error ? e.message : "invalid"}`, 400);
+      }
       const url = base.endsWith("/chat/completions") ? base : `${base}/chat/completions`;
       const res = await fetch(url, {
         method: "POST",

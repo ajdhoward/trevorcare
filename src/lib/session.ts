@@ -37,7 +37,7 @@ async function hmac(secret: string, message: string): Promise<string> {
 
 export interface SessionPayload {
   e: number; // expiry (epoch ms)
-  n?: string; // display hint (non-sensitive), optional
+  n?: string; // display hint (non-sensitive), optional — the signed-in username
 }
 
 /** Sign a new session token valid for SESSION_DAYS. */

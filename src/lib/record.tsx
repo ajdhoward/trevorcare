@@ -307,8 +307,12 @@ export interface ConditionItem {
   source_note: string;
   desc: string;
   meds: string[];
-  evidence: { summary: string; stats: { label: string; value: number | string }[] };
-  links: { tab: string; kw?: string; label: string }[];
+  // richer shape preferred; a bare number (legacy generator output) is rendered
+  // defensively as a count instead of crashing the Conditions tab
+  evidence:
+    | { summary: string; stats?: { label: string; value: number | string }[] }
+    | number;
+  links: ({ tab: string; kw?: string; label: string } | string)[];
   triggers: string[];
   staff: string[];
   comfort: string[];
@@ -330,9 +334,10 @@ export interface SectionsData {
   headline: string;
   verdict: string;
   verdict_label: string;
-  search_evidence: string;
-  s17: { title: string; what: string; relevance: string; watch_for: string[] };
-  s117: { title: string; what: string; relevance: string; watch_for: string[] };
+  // data ships as a string[]; a plain string is tolerated defensively
+  search_evidence: string[] | string;
+  s17: { title: string; what: string; relevance: string; watch_for: string[] | string };
+  s117: { title: string; what: string; relevance: string; watch_for: string[] | string };
   related_law: { title: string; text: string }[];
   bottom_line: string;
 }
