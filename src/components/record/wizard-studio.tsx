@@ -21,7 +21,7 @@ import { type WizardDefData, type WizardStep, type WizardField, type WizardField
 import { WizardEngine, type SubjectOption } from "@/components/record/wizard-engine";
 import { type CareSubjectRecord } from "@/lib/subjects";
 
-const FIELD_TYPES: WizardFieldType[] = ["text", "textarea", "number", "date", "select", "checkbox"];
+const FIELD_TYPES: WizardFieldType[] = ["text", "textarea", "number", "date", "select", "checkbox", "password"];
 
 export default function WizardStudio({ subjects, canManage }: { subjects: CareSubjectRecord[]; canManage: boolean }) {
   const [wizards, setWizards] = useState<WizardDefData[]>([]);
@@ -309,7 +309,7 @@ export default function WizardStudio({ subjects, canManage }: { subjects: CareSu
                       <p className="mb-2 font-semibold text-foreground">How the framework works</p>
                       <ul className="list-disc space-y-1.5 pl-4">
                         <li>The runtime renders ANY definition: steps in order, fields by type, required checks, then a submit mapped to the wizard&apos;s bound action.</li>
-                        <li>System wizards are bound to actions: <code>add-service-user</code> creates a person, <code>opg-receipt</code> writes a ledger entry, <code>lpa-setup</code> registers an instrument, <code>document-intake</code> stores &amp; extracts.</li>
+                        <li>System wizards are bound to actions: <code>add-service-user</code> creates a person, <code>opg-receipt</code> writes a ledger entry, <code>lpa-setup</code> registers an instrument, <code>document-intake</code> stores &amp; extracts, and <code>connect-ai-gateway</code> routes the AI assistant through your Cloudflare AI Gateway (client-side — secrets stay in the browser).</li>
                         <li>New wizards (custom keys) complete as recorded runs — bind an action when you&apos;re ready, or use them as structured checklists today.</li>
                         <li>Option lists containing <code>@subjects</code> automatically render the live service-user registry.</li>
                         <li>Saving bumps the version — nothing is destructively overwritten, and the previous shape stays in your git history.</li>

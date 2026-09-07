@@ -16,7 +16,7 @@ care-intelligence interface. Dark mode by default, teal palette, mobile-first
 | **Dad** | Full care record (visits & notes, medication/eMAR + **reconciliation & governance view**, watch items + flag analytics, well-being index, conditions, documents), **"My Day" tablet view** (`/kiosk`) |
 | **Mum** | Care-home oversight: contact log, well-being tracker, escalation ladder, email/phone templates (no portal on the home's side) |
 | **Connect** | WhatsApp groups (Whapi.Cloud) in/out + care inbox, **calls & evidence log** (searchable transcripts, highlights, audited copying, contact-spike early warning), **share links for advisers**, **AI review bridge** with feedback ingest |
-| **Intelligence** | AI assistant (multi-provider, incl. zero-key Cloudflare Workers AI), conditions, recommendations |
+| **Intelligence** | AI assistant (multi-provider, incl. zero-key Cloudflare Workers AI) routable through **Cloudflare AI Gateway** (free: caching, rate limits, logs — guided setup wizard included), conditions, recommendations |
 | **Oversight & assurance** | **Care Hub & legal** (case file, tickable actions, briefings & runbooks, statutory dossier generator with escalation clocks, agency handoff register), alerts engine + bell (incl. the 3×-mean contact-spike rule), records audit + DQ log, social & comms letters, **local-authority ASC watch**, API & data catalog |
 | **Security** | Fail-closed sign-in gate (`/login`), 30-day signed sessions, throttled passwords, header sign-out — set `PORTAL_PASSWORD` + `SESSION_SECRET` (see `.env.example`) |
 

@@ -6,18 +6,28 @@
 //
 // Endpoints:
 //   POST /api/ai   { provider, model, baseUrl?, cfAccountId?, apiKey?,
-//                    temperature?, maxTokens?, messages[] }
+//                    temperature?, maxTokens?, gatewayAccountId?, gatewayId?,
+//                    gatewaySlug?, messages[] }
 //                  header  X-Engine-Key: <shared key>   (if ENGINE_SHARED_KEY is set)
 //   GET  /health   -> { ok, bindings: { workersAI } }
 //
 // Providers:
 //   openai | openai-compatible | anthropic | google | cloudflare (API token)
 //   workers-ai  → uses the Worker's [ai] binding: no API key needed at all.
+//
+// Cloudflare AI Gateway: set gatewayAccountId + gatewayId in the request and
+// every provider call is routed through your gateway (BYOK passthrough; the
+// workers-ai provider uses the native binding option { gateway: { id } }).
+// Gateway core features are free — caching, rate limiting, logs.
 
 export interface Env {
   ENGINE_SHARED_KEY?: string;
   AI?: {
-    run: (model: string, input: Record<string, unknown>) => Promise<unknown>;
+    run: (
+      model: string,
+      input: Record<string, unknown>,
+      options?: { gateway?: { id?: string; skipCache?: boolean; cacheTtl?: number; collectLogs?: boolean; metadata?: Record<string, string> } }
+    ) => Promise<unknown>;
   };
 }
 
@@ -34,7 +44,50 @@ interface EngineRequest {
   apiKey?: string;
   temperature?: number;
   maxTokens?: number;
+  gatewayAccountId?: string;
+  gatewayId?: string;
+  gatewaySlug?: string;
   messages?: ChatMessage[];
+}
+
+// --- Cloudflare AI Gateway (BYOK passthrough) — self-contained twin of the
+// app's src/lib/ai/gateway.ts; keep the URL shapes in sync. ---
+const HOST_SLUGS: Array<[RegExp, string]> = [
+  [/api\.groq\.com/i, "groq"],
+  [/openrouter\.ai/i, "openrouter"],
+  [/api\.deepseek\.com/i, "deepseek"],
+  [/api\.mistral\.ai/i, "mistral"],
+  [/api\.perplexity\.ai/i, "perplexity"],
+  [/api\.cohere\.(ai|com)/i, "cohere"],
+  [/api\.x\.ai/i, "grok"],
+  [/api\.together\.(xyz|ai)/i, "together-ai"],
+];
+
+function gatewayBase(req: EngineRequest): string {
+  const acct = (req.gatewayAccountId || "").trim();
+  const id = (req.gatewayId || "").trim();
+  if (!acct || !id) return "";
+  return `https://gateway.ai.cloudflare.com/v1/${encodeURIComponent(acct)}/${encodeURIComponent(id)}`;
+}
+
+function throughGateway(provider: string, upstreamUrl: string, model: string, req: EngineRequest): string {
+  const base = gatewayBase(req);
+  if (!base) return "";
+  const slug = (req.gatewaySlug || "").trim() || HOST_SLUGS.find(([re]) => re.test(upstreamUrl))?.[1] || "";
+  switch (provider) {
+    case "openai":
+      return `${base}/openai/chat/completions`;
+    case "openai-compatible":
+      return slug ? `${base}/${slug}/chat/completions` : "";
+    case "anthropic":
+      return `${base}/anthropic/v1/messages`;
+    case "google":
+      return `${base}/google-ai-studio/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+    case "cloudflare":
+      return `${base}/workers-ai/${model.trim()}`;
+    default:
+      return "";
+  }
 }
 
 const CORS = {
@@ -90,8 +143,15 @@ async function runProvider(req: EngineRequest, env: Env): Promise<Response> {
   // --- Workers AI via binding: the "built on Cloudflare" zero-key path ---
   if (provider === "workers-ai") {
     if (!env.AI) return err("This worker has no [ai] binding.", 400, "Redeploy with the bundled wrangler.jsonc, which declares it.");
+    const gwId = (req.gatewayId || "").trim();
     try {
-      const out = (await env.AI.run(model, { messages, max_tokens: maxTokens, temperature })) as
+      const out = (await env.AI.run(
+        model,
+        { messages, max_tokens: maxTokens, temperature },
+        // Route through the family's AI Gateway when one is set (free: caching,
+        // rate limits, logs). https://developers.cloudflare.com/ai-gateway/
+        gwId ? { gateway: { id: gwId } } : undefined
+      )) as
         | { response?: string }
         | string;
       const text = typeof out === "string" ? out : out.response || "";
@@ -108,7 +168,8 @@ async function runProvider(req: EngineRequest, env: Env): Promise<Response> {
         ? "https://api.openai.com/v1"
         : (req.baseUrl || "").trim().replace(/\/+$/, "");
     if (!base) return err("Base URL is required for OpenAI-compatible providers.");
-    const url = base.endsWith("/chat/completions") ? base : `${base}/chat/completions`;
+    const direct = base.endsWith("/chat/completions") ? base : `${base}/chat/completions`;
+    const url = throughGateway(provider, base, model, req) || direct;
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}) },
@@ -126,7 +187,9 @@ async function runProvider(req: EngineRequest, env: Env): Promise<Response> {
     if (!apiKey) return err("Anthropic requires an API key.");
     const system = messages.filter((m) => m.role === "system").map((m) => m.content).join("\n\n");
     const convo = messages.filter((m) => m.role !== "system").map((m) => ({ role: m.role, content: m.content }));
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const direct = "https://api.anthropic.com/v1/messages";
+    const url = throughGateway(provider, direct, model, req) || direct;
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
       body: JSON.stringify({ model, system, messages: convo, temperature, max_tokens: maxTokens }),
@@ -145,7 +208,8 @@ async function runProvider(req: EngineRequest, env: Env): Promise<Response> {
     const contents = messages
       .filter((m) => m.role !== "system")
       .map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+    const direct = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+    const url = (throughGateway(provider, direct, model, req) || direct) + `?key=${encodeURIComponent(apiKey)}`;
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -166,8 +230,12 @@ async function runProvider(req: EngineRequest, env: Env): Promise<Response> {
   if (provider === "cloudflare") {
     if (!apiKey) return err("Cloudflare API token required (or use the workers-ai provider with the [ai] binding).");
     const account = (req.cfAccountId || "").trim();
-    if (!account) return err("Cloudflare account id required.");
-    const url = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(account)}/ai/run/${encodeURIComponent(model)}`;
+    const viaGateway = Boolean(gatewayBase(req));
+    if (!account && !viaGateway) return err("Cloudflare account id required.");
+    const direct = account
+      ? `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(account)}/ai/run/${encodeURIComponent(model)}`
+      : "";
+    const url = throughGateway(provider, direct || "https://api.cloudflare.com", model, req) || direct;
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
@@ -175,9 +243,9 @@ async function runProvider(req: EngineRequest, env: Env): Promise<Response> {
     });
     const txt = await res.text();
     if (!res.ok) return err(upstreamMessage(res.status, txt), res.status, HINTS[String(res.status)]);
-    const j = JSON.parse(txt) as { success?: boolean; result?: { response?: string }; errors?: { message?: string }[] };
+    const j = JSON.parse(txt) as { success?: boolean; result?: { response?: string }; response?: string; errors?: { message?: string }[] };
     if (j.success === false) return err(j.errors?.[0]?.message || "Cloudflare Workers AI call failed.", 502);
-    const text = j.result?.response || "";
+    const text = j.result?.response || j.response || "";
     if (!text) return err("Provider returned an empty completion.", 502);
     return json({ text });
   }

@@ -3,6 +3,42 @@
 Every batch appends here (and to worklog.md) — the docs say current-truth,
 this file says history.
 
+## Batch 13 — 07 Sep 2026 (this release)
+
+**Cloudflare AI Gateway — first-class, wizard-driven, cost-validated**
+
+- **Engine-native gateway routing**: set `gatewayAccountId` + `gatewayId` in
+  the AI engine settings and every provider call is routed through
+  `https://gateway.ai.cloudflare.com/v1/{account}/{gateway}/…` (BYOK
+  passthrough) — OpenAI, Anthropic, Google AI Studio, Workers AI (REST), and
+  OpenAI-compatible providers via their gateway slug (groq, openrouter,
+  deepseek, mistral, perplexity, cohere, grok, together — auto-derived from
+  the base URL or set manually). Shared rewrite logic in
+  `src/lib/ai/gateway.ts`, mirrored self-contained in the deployable worker
+  (`cloudflare-worker/src/index.ts`), which also routes the Workers-AI
+  binding natively via `env.AI.run(model, input, { gateway: { id } })`.
+- **New system wizard — "Connect Cloudflare AI Gateway"**: seeded into the
+  wizard framework (per-key seeding so existing databases get it), launched
+  from the Deploy & sync tab step 4 or the Wizard studio. Two steps, ends
+  with a **live test call**; runs client-side so the provider key and engine
+  settings never leave the browser. New `password` field type in the wizard
+  framework (rendered masked, never posted to the server).
+- **AI assistant settings**: new "Cloudflare AI Gateway" panel (account ID,
+  gateway name, provider slug for openai-compatible, live endpoint preview,
+  routing badge) — the wizard prefills the same fields.
+- **Deploy & sync step 4 modernised**: applies native gateway settings
+  (instead of the old openai-compatible base-URL hack) and offers the guided
+  wizard with the live test.
+- **Cost validation** (verified against Cloudflare docs, Sep 2026): the
+  gateway's core features are free on every plan; Workers AI includes a free
+  daily neuron allocation ($0.011 per additional 1,000 neurons); the Workers
+  Paid plan ($5/mo) includes 10M requests + 30M CPU-ms/month, and D1/KV/R2
+  free allowances cover a family-scale deployment several times over. A
+  single-family deployment of this app fits comfortably inside $5/month —
+  see docs/DEPLOYMENT.md §Cost.
+- Seed-once seeding is now per-key so new built-in wizards appear in
+  databases created by earlier versions.
+
 ## Batch 11 — 07 Sep 2026 (this release)
 
 **Systems-Review delivery + security gate + push-to-repo pipeline**

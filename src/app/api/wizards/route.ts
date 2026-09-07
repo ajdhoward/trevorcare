@@ -8,9 +8,10 @@ import { withSession } from "@/lib/server/guard";
 import { SEED_WIZARDS, parseWizardDef, serializeWizardSteps, type WizardStep } from "@/lib/wizards";
 
 async function seedOnce() {
-  const count = await db.wizardDef.count();
-  if (count > 0) return;
+  // Seed per key (not just once per table) so new built-in wizards shipped by
+  // an update appear in databases that were seeded by an earlier version.
   for (const w of SEED_WIZARDS) {
+    if ((await db.wizardDef.count({ where: { key: w.key } })) > 0) continue;
     await db.wizardDef.create({
       data: {
         key: w.key,

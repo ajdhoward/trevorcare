@@ -76,17 +76,68 @@ The repo carries the AI's working memory (`AGENTS.md`, `docs/`, `worklog.md`,
 `.ai/context.md`), so this workspace, your repo and the live portal never
 drift apart — and any future AI session starts fully briefed.
 
-## 4. AI Gateway wizard (in the Deploy & sync tab, step 4)
+## 4. AI Gateway wizard (first-class, free)
 
-1. Dashboard → AI → AI Gateway → create gateway (e.g. `haven360`).
-2. Paste account ID + gateway name + provider in the wizard.
-3. It generates `https://gateway.ai.cloudflare.com/v1/{acct}/{gw}/{provider}`
-   and rewrites `care-ai-settings-v1` (engine: openai-compatible via gateway).
-4. Set your real provider key in the AI assistant tab; enable caching +
-   rate limiting in the gateway; keep payload logging off unless you accept
-   prompt storage (UK GDPR minimisation).
+The AI assistant can route **every provider call** through your own
+[Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/) —
+caching, rate limiting, spend controls and logs in one place. The gateway's
+core features are **free on every plan**; your provider API key still travels
+only browser → engine → gateway → upstream (never stored server-side).
 
-## 5. Webhooks & email on Workers (production ingest)
+Two ways to set it up:
+
+1. **The guided wizard (recommended)** — *Deploy & sync → step 4 → “Run the
+   guided wizard”*, or the Wizard studio → **“Connect Cloudflare AI
+   Gateway”**. It walks dashboard → AI → AI Gateway → Create gateway, takes
+   your account ID + gateway name + provider + model (+ optional API key,
+   masked, browser-only), **rewrites the engine settings in this browser and
+   runs a live test call**. It is a normal wizard-framework definition —
+   editable in the studio like every other wizard.
+2. **Quick apply** — *Deploy & sync → step 4* fields + “Apply gateway to the
+   AI engine”. Same settings, no test call. The AI assistant settings panel
+   shows the resulting endpoint and a routing badge, and can be edited
+   directly.
+
+Supported provider paths (BYOK passthrough, per Cloudflare docs):
+
+| Provider | Gateway URL after `…/v1/{account}/{gateway}` |
+|---|---|
+| OpenAI | `/openai/chat/completions` |
+| Anthropic | `/anthropic/v1/messages` |
+| Google AI Studio | `/google-ai-studio/v1beta/models/{model}:generateContent` |
+| Workers AI (API token) | `/workers-ai/{model}` |
+| Groq / OpenRouter / DeepSeek / … | `/{slug}/chat/completions` |
+
+Workers AI in **worker mode** routes natively instead:
+`env.AI.run(model, input, { gateway: { id } })` — no API token needed at all.
+In the gateway settings, enable **caching** (identical record Q&A served from
+.cache), **rate limiting**, and **Log payloads** only if you accept prompts
+being stored — otherwise keep logs metadata-only for UK GDPR minimisation.
+
+## 5. Cost — what fits in the $5 Workers plan
+
+Validated against Cloudflare pricing pages (September 2026) for a single
+family's usage of this app:
+
+| Piece | Included | Typical family use |
+|---|---|---|
+| Workers Paid plan | $5/mo minimum: **10M requests + 30M CPU-ms/month**, then $0.30/M requests, $0.02/M CPU-ms | Portal + worker: a few thousand requests/month — far inside included |
+| AI Gateway | **Free core** (caching, rate limits, logs; ~100k log events/mo free) | All of it — the gateway itself costs nothing; you pay only your AI provider for tokens |
+| Workers AI | Free daily neuron allocation; $0.011 per additional 1,000 neurons | Zero-key classification/Q&A fits the free daily allocation |
+| Static assets (portal pages) | Free, unlimited requests | — |
+| D1 (family DB, audit chain) | Free: 5M row-reads/day, 100k row-writes/day, 5GB | A family record uses a tiny fraction |
+| KV (consent cache) | Free: 100k reads/day, 1k writes/day, 1GB | Comfortable |
+| R2 (documents/vault) | Free: 10 GB-month, 1M Class A + 10M Class B ops/mo | Hundreds of documents, zero egress fees |
+| Cloudflare Access (zero-trust gate) | Free up to 50 users | Whole family |
+| Turnstile / Email Routing / cron triggers | Free | — |
+
+**Bottom line:** $5/month covers the whole platform for one family — the only
+variable extra is your chosen AI provider's token cost, which the gateway's
+caching and rate limits actively reduce. On the **free** plan the AI worker
+also runs (100k req/day, 10ms CPU — fine for the stateless engine), but the
+full Next.js portal wants the paid plan's 30s CPU ceiling for SSR headroom.
+
+## 6. Webhooks & email on Workers (production ingest)
 
 - **WhatsApp**: Whapi webhook URL → `https://<worker>/api/whapi/webhook?secret=…`
   (D1 table + shared secret; recipe in `cloudflare-worker/README.md`).
@@ -95,7 +146,7 @@ drift apart — and any future AI session starts fully briefed.
   `0 6 * * *` daily digest + med-window checks feeding GOV.UK Notify-style
   email alerts.
 
-## 6. Post-deploy verification (do not skip)
+## 7. Post-deploy verification (do not skip)
 
 - `/health` on the worker returns `{ ok: true }`.
 - Access blocks you when signed out of the allowed identity.

@@ -39,6 +39,7 @@ import {
   isConfigured,
   chat,
   testConnection,
+  gatewayEndpoint,
   recordDigest,
   emailMessages,
   carePlanMessages,
@@ -401,6 +402,59 @@ export default function Assistant({
               </p>
             </div>
           )}
+
+          {/* Cloudflare AI Gateway — optional, free; wired via the connect-ai-gateway wizard or here */}
+          <div className="space-y-2 rounded-lg border border-dashed p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <label className="text-xs font-semibold text-foreground/80">
+                Cloudflare AI Gateway (optional — free)
+              </label>
+              <Badge variant="outline" className="text-[10px]">
+                {settings.gatewayId.trim() && settings.gatewayAccountId.trim()
+                  ? "Routing through your gateway"
+                  : "Direct to provider"}
+              </Badge>
+            </div>
+            <div className="grid gap-3 md:grid-cols-3">
+              <div className="space-y-1.5">
+                <label className="text-xs text-muted-foreground">Account ID</label>
+                <Input
+                  placeholder="32-character account id"
+                  value={settings.gatewayAccountId}
+                  onChange={(e) => setSettings({ ...settings, gatewayAccountId: e.target.value })}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-muted-foreground">Gateway name</label>
+                <Input
+                  placeholder="e.g. trevorcare"
+                  value={settings.gatewayId}
+                  onChange={(e) => setSettings({ ...settings, gatewayId: e.target.value })}
+                />
+              </div>
+              {settings.provider === "openai-compatible" && (
+                <div className="space-y-1.5">
+                  <label className="text-xs text-muted-foreground">Gateway provider slug</label>
+                  <Input
+                    placeholder="groq · openrouter · deepseek…"
+                    value={settings.gatewaySlug}
+                    onChange={(e) => setSettings({ ...settings, gatewaySlug: e.target.value })}
+                  />
+                </div>
+              )}
+            </div>
+            <p className="text-[11px] leading-relaxed text-muted-foreground">
+              Set both fields to route this provider through
+              <code className="mx-1 rounded bg-muted px-1">gateway.ai.cloudflare.com/v1/…</code>
+              — central caching, rate limits and logs, at no cost. Your API key still travels only
+              from this browser to the engine to the gateway. Prefer a guided setup? Run the
+              <strong> “Connect Cloudflare AI Gateway” wizard </strong>
+              (Wizard studio) — it fills these fields and tests the connection live.
+            </p>
+            {gatewayEndpoint(settings) && (
+              <pre className="overflow-x-auto rounded bg-muted p-2 font-mono text-[10px]">{gatewayEndpoint(settings)}</pre>
+            )}
+          </div>
 
           <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-1.5">

@@ -19,6 +19,14 @@ import {
 import { Progress } from "@/components/ui/progress";
 import type { WizardDefData, WizardField } from "@/lib/wizards";
 import { type CareSubjectRecord } from "@/lib/subjects";
+import {
+  loadSettings,
+  saveSettings,
+  testConnection,
+  gatewayEndpoint,
+  type AISettings,
+  type ProviderId,
+} from "@/lib/ai/engine";
 
 export interface SubjectOption {
   id: string;
@@ -84,13 +92,14 @@ function FieldInput({
           </SelectContent>
         </Select>
       )}
-      {(field.type === "text" || field.type === "number" || field.type === "date") && (
+      {(field.type === "text" || field.type === "number" || field.type === "date" || field.type === "password") && (
         <Input
           id={`wf-${field.id}`}
-          type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
+          type={field.type === "number" ? "number" : field.type === "date" ? "date" : field.type === "password" ? "password" : "text"}
           value={String(value ?? "")}
           placeholder={field.placeholder}
           step={field.type === "number" ? "0.01" : undefined}
+          autoComplete={field.type === "password" ? "off" : undefined}
           onChange={(e) => onChange(e.target.value)}
         />
       )}
@@ -141,6 +150,19 @@ export function WizardEngine({
     setBusy(true);
     setError(null);
     try {
+      // Client-side action: the AI Gateway wizard writes engine settings into
+      // THIS BROWSER (values can include the provider API key) and runs a live
+      // test call — nothing is posted to the server.
+      if (def.key === "connect-ai-gateway") {
+        const r = await runGatewayWizard(values);
+        if (!r.ok) {
+          setError(r.message);
+          setBusy(false);
+          return;
+        }
+        onDone({ ok: true, message: r.message, data: { ok: true, endpoint: r.endpoint } });
+        return;
+      }
       const res = await fetch("/api/wizard-runs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -246,6 +268,58 @@ function describeResult(key: string, json: Record<string, unknown>): string {
     return `Document stored in the vault. ${Number(json.factsQueued ?? 0)} fact(s) queued for review.`;
   }
   return "Wizard completed.";
+}
+
+/**
+ * connect-ai-gateway — client-side wizard action. Maps the wizard's provider
+ * choice onto engine settings, routes them through the AI Gateway, optionally
+ * makes the result the active engine, and runs a live test call. Secrets stay
+ * in localStorage; nothing is posted to the server.
+ */
+async function runGatewayWizard(
+  values: Record<string, string | boolean>
+): Promise<{ ok: boolean; message: string; endpoint: string }> {
+  const map: Record<string, { provider: ProviderId; baseUrl?: string; gatewaySlug?: string }> = {
+    openai: { provider: "openai" },
+    anthropic: { provider: "anthropic" },
+    google: { provider: "google" },
+    cloudflare: { provider: "cloudflare" },
+    groq: { provider: "openai-compatible", baseUrl: "https://api.groq.com/openai/v1", gatewaySlug: "groq" },
+    openrouter: { provider: "openai-compatible", baseUrl: "https://openrouter.ai/api/v1", gatewaySlug: "openrouter" },
+  };
+  const chosen = map[String(values.provider ?? "").trim()] ?? map.openai;
+  const current = loadSettings();
+  const next: AISettings = {
+    ...current,
+    ...chosen,
+    model: String(values.model ?? "").trim() || current.model,
+    gatewayAccountId: String(values.accountId ?? "").trim(),
+    gatewayId: String(values.gatewayName ?? "").trim(),
+    gatewaySlug: chosen.gatewaySlug ?? "",
+  };
+  const key = String(values.apiKey ?? "").trim();
+  if (key) next.apiKey = key;
+  const endpoint = gatewayEndpoint(next);
+  const applyNow = values.testOnly !== true;
+  if (applyNow) saveSettings(next);
+  const r = await testConnection(next);
+  if (!r.ok) {
+    return {
+      ok: false,
+      endpoint,
+      message:
+        `Test call through the gateway failed: ${r.message}` +
+        (applyNow
+          ? " — the settings were saved, so once the gateway/account exists (and the key is right) the engine will work. Re-run the wizard to test again."
+          : " — settings were NOT changed (test-only run)."),
+    };
+  }
+  return {
+    ok: true,
+    endpoint,
+    message: `Gateway connected — test call via ${endpoint || "the gateway"} replied “${r.message}” in ${r.latencyMs} ms.` +
+      (applyNow ? " This is now your active engine." : " (Test-only run — your engine was not switched.)"),
+  };
 }
 
 /** Hook: fetches wizard definitions + subjects, launches the engine in a Dialog. */

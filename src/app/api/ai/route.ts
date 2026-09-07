@@ -11,6 +11,7 @@
 
 import { NextResponse } from "next/server";
 import { assertPublicUrl } from "@/lib/server/guard";
+import { throughGateway, gatewayBase, type GatewayConfig } from "@/lib/ai/gateway";
 
 export const runtime = "nodejs";
 
@@ -27,6 +28,9 @@ interface EngineRequest {
   apiKey?: string;
   temperature?: number;
   maxTokens?: number;
+  gatewayAccountId?: string;
+  gatewayId?: string;
+  gatewaySlug?: string;
   messages?: ChatMessage[];
 }
 
@@ -93,6 +97,14 @@ export async function POST(req: Request) {
     return c.signal;
   };
 
+  // Cloudflare AI Gateway (optional, free): when the client supplies account +
+  // gateway id, provider calls are routed through the gateway (BYOK passthrough).
+  const gw: GatewayConfig = {
+    gatewayAccountId: body.gatewayAccountId,
+    gatewayId: body.gatewayId,
+    gatewaySlug: body.gatewaySlug,
+  };
+
   try {
     if (provider === "openai" || provider === "openai-compatible") {
       const base =
@@ -107,7 +119,8 @@ export async function POST(req: Request) {
       } catch (e) {
         return err(`Base URL rejected: ${e instanceof Error ? e.message : "invalid"}`, 400);
       }
-      const url = base.endsWith("/chat/completions") ? base : `${base}/chat/completions`;
+      const direct = base.endsWith("/chat/completions") ? base : `${base}/chat/completions`;
+      const url = throughGateway(provider, base, model, gw) || direct;
       const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -131,7 +144,9 @@ export async function POST(req: Request) {
       const convo = messages
         .filter((m) => m.role !== "system")
         .map((m) => ({ role: m.role, content: m.content }));
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const direct = "https://api.anthropic.com/v1/messages";
+      const url = throughGateway(provider, direct, model, gw) || direct;
+      const res = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -155,7 +170,8 @@ export async function POST(req: Request) {
       const contents = messages
         .filter((m) => m.role !== "system")
         .map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const direct = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+      const url = (throughGateway(provider, direct, model, gw) || direct) + `?key=${encodeURIComponent(apiKey)}`;
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -177,8 +193,13 @@ export async function POST(req: Request) {
     if (provider === "cloudflare") {
       if (!apiKey) return err("Cloudflare API token required (or use the Worker binding provider).");
       const account = (body.cfAccountId || "").trim();
-      if (!account) return err("Cloudflare account id required.", 400, "Find it in the Cloudflare dashboard right sidebar.");
-      const url = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(account)}/ai/run/${encodeURIComponent(model)}`;
+      const viaGateway = Boolean(gatewayBase(gw));
+      if (!account && !viaGateway)
+        return err("Cloudflare account id required.", 400, "Find it in the Cloudflare dashboard right sidebar.");
+      const direct = account
+        ? `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(account)}/ai/run/${encodeURIComponent(model)}`
+        : "";
+      const url = throughGateway(provider, direct || "https://api.cloudflare.com", model, gw) || direct;
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
@@ -187,11 +208,13 @@ export async function POST(req: Request) {
       });
       const txt = await res.text();
       if (!res.ok) return err(upstreamMessage(res.status, txt), res.status, HINTS[String(res.status)]);
-      const j = JSON.parse(txt) as { success?: boolean; result?: { response?: string }; errors?: { message?: string }[] };
+      const j = JSON.parse(txt) as { success?: boolean; result?: { response?: string }; response?: string; errors?: { message?: string }[] };
       if (j.success === false) {
         return err(j.errors?.[0]?.message || "Cloudflare Workers AI call failed.", 502);
       }
-      const text = j.result?.response || "";
+      // Direct REST returns { result: { response } }; via AI Gateway the
+      // passthrough may return the model output directly ({ response }).
+      const text = j.result?.response || j.response || "";
       if (!text) return err("Provider returned an empty completion.", 502);
       return NextResponse.json({ text });
     }

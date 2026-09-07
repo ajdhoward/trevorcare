@@ -8,6 +8,7 @@
 // ("engine mode: worker") so the app can run fully on the Cloudflare platform.
 
 import type { CareRecord, RecommendationItem, AuditData } from "@/lib/record";
+import { gatewayBase, throughGateway } from "@/lib/ai/gateway";
 
 export type ProviderId =
   | "openai"
@@ -28,6 +29,13 @@ export interface AISettings {
   apiKey: string;
   temperature: number;
   maxTokens: number;
+  // Cloudflare AI Gateway (optional): when account + id are set, requests are
+  // routed through https://gateway.ai.cloudflare.com/v1/{account}/{id}/… —
+  // caching, rate limits and logs for free; the provider key still travels
+  // only in this browser → engine → gateway → upstream.
+  gatewayAccountId: string;
+  gatewayId: string;
+  gatewaySlug: string; // openai-compatible only (e.g. "groq", "openrouter")
 }
 
 export const PROVIDER_META: Record<
@@ -80,6 +88,9 @@ export const DEFAULT_SETTINGS: AISettings = {
   apiKey: "",
   temperature: 0.3,
   maxTokens: 1200,
+  gatewayAccountId: "",
+  gatewayId: "",
+  gatewaySlug: "",
 };
 
 const LS_KEY = "care-ai-settings-v1";
@@ -110,8 +121,19 @@ export function isConfigured(s: AISettings): boolean {
   if (s.mode === "worker") return Boolean(s.workerUrl);
   if (PROVIDER_META[s.provider].workerOnly) return false;
   if (s.provider === "openai-compatible") return Boolean(s.baseUrl);
-  if (s.provider === "cloudflare") return Boolean(s.apiKey && s.cfAccountId);
+  if (s.provider === "cloudflare")
+    return Boolean(s.apiKey && (s.cfAccountId || (s.gatewayId.trim() && s.gatewayAccountId.trim())));
   return Boolean(s.apiKey);
+}
+
+/** The gateway URL (or binding expression) the engine will call — "" when off. */
+export function gatewayEndpoint(s: AISettings): string {
+  if (!gatewayBase(s)) return "";
+  if (s.provider === "workers-ai") {
+    // Worker mode routes through the AI binding natively.
+    return `AI binding → env.AI.run("${s.model || "@cf/…"}", { gateway: { id: "${s.gatewayId.trim()}" } })`;
+  }
+  return throughGateway(s.provider, s.baseUrl, s.model, s);
 }
 
 export function engineEndpoint(s: AISettings): string {
@@ -167,6 +189,9 @@ async function once(
         apiKey: s.apiKey,
         temperature: s.temperature,
         maxTokens: s.maxTokens,
+        gatewayAccountId: s.gatewayAccountId,
+        gatewayId: s.gatewayId,
+        gatewaySlug: s.gatewaySlug,
         messages,
       }),
     });

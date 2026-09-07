@@ -14,7 +14,8 @@ export type WizardFieldType =
   | "number"
   | "date"
   | "select"
-  | "checkbox";
+  | "checkbox"
+  | "password"; // secret — handled client-side only, never posted to the server
 
 export interface WizardField {
   id: string;
@@ -49,6 +50,7 @@ export type WizardActionKey =
   | "log-opg-receipt" // finances: receipt + ledger entry
   | "register-lpa" // legal: register an LPA instrument
   | "intake-document" // vault: upload + extract
+  | "configure-ai-gateway" // deploy & AI: route the assistant through Cloudflare AI Gateway (client-side, secrets stay in the browser)
   | "custom"; // definitions added later — values posted to /api/wizard-runs
 
 export const WIZARD_ACTIONS: Record<string, WizardActionKey> = {
@@ -56,6 +58,7 @@ export const WIZARD_ACTIONS: Record<string, WizardActionKey> = {
   "opg-receipt": "log-opg-receipt",
   "lpa-setup": "register-lpa",
   "document-intake": "intake-document",
+  "connect-ai-gateway": "configure-ai-gateway",
 };
 
 // ---------------------------------------------------------------------------
@@ -245,6 +248,71 @@ export const SEED_WIZARDS: Array<{
             help: "Works on text documents, AI-chat exports, passport MRZ images' embedded text, and any pasted text.",
           },
           { id: "pastedText", label: "…or paste the text to extract from", type: "textarea", help: "Useful for AI chat transcripts — paste the conversation and the fact extractor will pull out decisions, dates, contacts and actions." },
+        ],
+      },
+    ],
+  },
+  {
+    key: "connect-ai-gateway",
+    title: "Connect Cloudflare AI Gateway",
+    description:
+      "Route the AI assistant through your own Cloudflare AI Gateway: caching, rate limiting, spend controls and logs in one place — the gateway's core features are free on every plan. The wizard rewrites the engine settings in THIS BROWSER only and runs a live test call; no key or setting is posted to the server.",
+    system: true,
+    steps: [
+      {
+        id: "gateway",
+        title: "Create the gateway in your Cloudflare dashboard",
+        fields: [
+          {
+            id: "accountId",
+            label: "Cloudflare account ID",
+            type: "text",
+            required: true,
+            placeholder: "32-character hex id",
+            help: "Cloudflare dashboard (one.dash.cloudflare.com) → home → right sidebar → Account ID.",
+          },
+          {
+            id: "gatewayName",
+            label: "Gateway name",
+            type: "text",
+            required: true,
+            prefill: "trevorcare",
+            help: "Dashboard → AI → AI Gateway → Create gateway. Any name works — use exactly the same name here.",
+          },
+        ],
+      },
+      {
+        id: "engine",
+        title: "Choose the model that flows through it",
+        fields: [
+          {
+            id: "provider",
+            label: "Upstream provider",
+            type: "select",
+            required: true,
+            options: ["openai", "anthropic", "google", "cloudflare", "groq", "openrouter"],
+            help: "cloudflare = Workers AI with a Cloudflare API token (no third-party key needed, 10k neurons/day free). groq / openrouter run through the openai-compatible engine via the gateway.",
+          },
+          {
+            id: "model",
+            label: "Model",
+            type: "text",
+            required: true,
+            prefill: "gpt-4o-mini",
+            help: "e.g. gpt-4o-mini · claude-3-5-haiku-latest · gemini-2.0-flash · @cf/meta/llama-3.3-70b-instruct-fp8-fast · llama-3.3-70b-versatile (Groq).",
+          },
+          {
+            id: "apiKey",
+            label: "Provider API key (optional)",
+            type: "password",
+            help: "Stored only in this browser, like every engine key — never sent to this app's server. Leave blank to keep the key already saved in the AI assistant settings.",
+          },
+          {
+            id: "testOnly",
+            label: "Test only — don't switch my engine yet",
+            type: "checkbox",
+            help: "Leave unticked to make this your active engine immediately after a successful test.",
+          },
         ],
       },
     ],

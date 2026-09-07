@@ -18,6 +18,7 @@ import {
   BadgeCheck, Database, HardDrive, Info,
 } from "lucide-react";
 import type { SysAuditAction } from "@/lib/auditlog";
+import { useWizardLauncher, WizardEngine } from "@/components/record/wizard-engine";
 
 export interface DeployProps {
   actorName: string;
@@ -75,6 +76,8 @@ export default function Deploy({ actorName, onAudit }: DeployProps) {
   const [pushing, setPushing] = useState(false);
   const [pushMsg, setPushMsg] = useState<string | null>(null);
   const [pushErr, setPushErr] = useState<string | null>(null);
+  const [gwNotice, setGwNotice] = useState<string | null>(null);
+  const wizard = useWizardLauncher();
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -111,15 +114,27 @@ export default function Deploy({ actorName, onAudit }: DeployProps) {
     try {
       const raw = localStorage.getItem("care-ai-settings-v1");
       const settings = raw ? JSON.parse(raw) : {};
+      // Native gateway routing: the engine dials gateway.ai.cloudflare.com and
+      // keeps talking the provider's own API (BYOK passthrough). groq and
+      // openrouter ride the openai-compatible engine with a provider slug.
+      const providerMap: Record<string, { provider: string; baseUrl?: string; gatewaySlug?: string }> = {
+        openai: { provider: "openai" },
+        anthropic: { provider: "anthropic" },
+        "google-ai-studio": { provider: "google" },
+        openrouter: { provider: "openai-compatible", baseUrl: "https://openrouter.ai/api/v1", gatewaySlug: "openrouter" },
+        groq: { provider: "openai-compatible", baseUrl: "https://api.groq.com/openai/v1", gatewaySlug: "groq" },
+      };
+      const chosen = providerMap[state.gw.provider] ?? providerMap.openai;
       const next = {
         ...settings,
-        provider: "openai-compatible",
-        baseUrl: gwUrl,
+        ...chosen,
         model: state.gw.model,
+        gatewayAccountId: state.gw.accountId.trim(),
+        gatewayId: state.gw.gateway.trim(),
         mode: "proxy",
       };
       localStorage.setItem("care-ai-settings-v1", JSON.stringify(next));
-      onAudit("ai.gateway", gwUrl, `AI Gateway wired into the engine: provider openai-compatible, model ${state.gw.model} — set your real API key in the AI assistant settings`, "notice");
+      onAudit("ai.gateway", gwUrl, `AI Gateway wired into the engine: provider ${chosen.provider}, model ${state.gw.model} — set your real API key in the AI assistant settings, or use the “Connect Cloudflare AI Gateway” wizard for a live test`, "notice");
       setStep(5);
     } catch { /* storage unavailable */ }
   };
@@ -299,16 +314,17 @@ export default function Deploy({ actorName, onAudit }: DeployProps) {
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm"><Sparkles className="h-4 w-4" /> 4 · Cloudflare AI Gateway wizard</CardTitle>
             <CardDescription>
-              Route every AI call through your own gateway: central caching, rate limits, spend controls and logs — no key
-              ever reaches the browser of the deployed app.
+              Route every AI call through your own gateway: central caching, rate limits, spend controls and logs. The
+              gateway's core features are free on every plan — no key ever reaches the browser of the deployed app.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <ol className="ml-4 list-decimal space-y-1 text-xs text-muted-foreground">
               <li>Cloudflare dashboard → AI → AI Gateway → Create gateway (name it, e.g. <code>haven360</code>).</li>
               <li>Copy your account ID (dashboard home) and paste below with the gateway name.</li>
-              <li>Apply — the wizard rewrites the AI engine settings to send requests through the gateway URL.</li>
+              <li>Apply — the wizard rewrites the AI engine settings to send requests through the gateway URL (the engine now speaks the provider's native API through the gateway, including Anthropic and Google).</li>
               <li>In AI → AI Gateway settings: enable <strong>caching</strong> (identical record Q&amp;A served from cache), <strong>rate limiting</strong> (e.g. 60 req/min), and <strong>Log payloads</strong> only if you accept prompts being stored — otherwise keep logs metadata-only for UK GDPR minimisation.</li>
+              <li>Prefer a guided flow with a live connection test? Run the <strong>“Connect Cloudflare AI Gateway” wizard</strong> — it lives in the wizard framework (Wizard studio) and is editable like every other wizard.</li>
             </ol>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
@@ -345,6 +361,15 @@ export default function Deploy({ actorName, onAudit }: DeployProps) {
               </>
             ) : (
               <p className="text-sm text-muted-foreground">Enter account ID and gateway name to generate the endpoint.</p>
+            )}
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <Button variant="outline" onClick={() => void wizard.launch("connect-ai-gateway")}>
+                <Sparkles className="mr-1.5 h-4 w-4" /> Run the guided wizard (with live connection test)
+              </Button>
+              <span className="text-[11px] text-muted-foreground">Same flow, editable in the Wizard studio — wizard definitions are data, not code.</span>
+            </div>
+            {gwNotice && (
+              <p className="rounded-lg border border-teal-500/40 bg-teal-950/30 p-2.5 text-xs text-teal-100" role="status">{gwNotice}</p>
             )}
           </CardContent>
         </Card>
@@ -445,6 +470,30 @@ export default function Deploy({ actorName, onAudit }: DeployProps) {
           </p>
         </CardContent>
       </Card>
+
+      {wizard.def && wizard.open && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => wizard.setOpen(false)}>
+          <div className="max-h-[85vh] w-full max-w-lg overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">{wizard.def.title}</CardTitle>
+                <p className="text-xs text-muted-foreground">{wizard.def.description}</p>
+              </CardHeader>
+              <CardContent>
+                <WizardEngine
+                  def={wizard.def}
+                  subjects={wizard.subjects}
+                  onDone={(r) => {
+                    wizard.setOpen(false);
+                    setGwNotice(r.message);
+                    onAudit("ai.gateway", "connect-ai-gateway", r.message, r.ok ? "notice" : "warning");
+                  }}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
