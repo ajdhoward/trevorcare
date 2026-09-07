@@ -19,14 +19,20 @@ import {
   loadLife360Settings, saveLife360Settings, decorateMember, memberInitials,
   life360Disclaimer,
 } from "@/lib/life360";
+import { type TrackerStore, type TrackerExit } from "@/lib/tracker";
+import { TrackerPanel } from "@/components/record/tracker";
 import type { SysAuditAction } from "@/lib/auditlog";
 
 export interface Life360Props {
   actorName: string;
+  tracker: TrackerStore;
+  onTrackerChange: (next: TrackerStore) => void;
+  exits: TrackerExit[];
+  onExitsChange: (next: TrackerExit[]) => void;
   onAudit: (action: SysAuditAction, target: string, detail: string, severity?: "info" | "notice" | "warning") => void;
 }
 
-export default function Life360Panel({ actorName, onAudit }: Life360Props) {
+export default function Life360Panel({ actorName, tracker, onTrackerChange, exits, onExitsChange, onAudit }: Life360Props) {
   const [settings, setSettings] = useState<Life360Settings | null>(null);
   const [tab, setTab] = useState<"password" | "token">("password");
   const [circles, setCircles] = useState<Life360Circle[]>([]);
@@ -120,6 +126,14 @@ export default function Life360Panel({ actorName, onAudit }: Life360Props) {
 
   return (
     <div className="space-y-4">
+      <TrackerPanel
+        store={tracker}
+        onChange={onTrackerChange}
+        exits={exits}
+        onExitsChange={onExitsChange}
+        onAudit={onAudit}
+      />
+
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base"><LocateFixed className="h-5 w-5 text-teal-700" /> Life360 — location awareness</CardTitle>

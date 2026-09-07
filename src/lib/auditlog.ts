@@ -71,7 +71,22 @@ export type SysAuditAction =
   | "council.check"
   | "policy.ingest"
   | "deploy.step"
-  | "ai.gateway";
+  | "ai.gateway"
+  | "auth.login"
+  | "auth.logout"
+  | "calls.copy"
+  | "carehub.action.toggle"
+  | "carehub.letter.copy"
+  | "carehub.letter.dispatch"
+  | "handoff.add"
+  | "handoff.update"
+  | "tracker.update"
+  | "tracker.exit.add"
+  | "tracker.exit.delete"
+  | "medrecon.flag.add"
+  | "medrecon.flag.resolve"
+  | "medrecon.export"
+  | "repo.push";
 
 export interface SysAuditEvent {
   seq: number;
@@ -258,4 +273,19 @@ export const ACTION_LABELS: Record<SysAuditAction, string> = {
   "policy.ingest": "Council policy text ingested",
   "deploy.step": "Deployment wizard step completed",
   "ai.gateway": "AI Gateway configuration changed",
+  "auth.login": "Portal sign-in",
+  "auth.logout": "Portal sign-out",
+  "calls.copy": "Call transcript copied",
+  "carehub.action.toggle": "Care Hub action updated",
+  "carehub.letter.copy": "Statutory letter copied",
+  "carehub.letter.dispatch": "Statutory letter dispatched",
+  "handoff.add": "Agency handoff logged",
+  "handoff.update": "Agency handoff updated",
+  "tracker.update": "Tracker status/checklist updated",
+  "tracker.exit.add": "Tracker exit event logged",
+  "tracker.exit.delete": "Tracker exit event removed",
+  "medrecon.flag.add": "Medication exception flag logged",
+  "medrecon.flag.resolve": "Medication exception flag updated",
+  "medrecon.export": "Medication reconciliation audit exported",
+  "repo.push": "Portal pushed to GitHub repo",
 };

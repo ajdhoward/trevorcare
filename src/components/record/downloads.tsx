@@ -10,6 +10,7 @@ import {
   Info,
   ListChecks,
   Download,
+  FolderGit2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -165,6 +166,38 @@ export default function Downloads({
                 Download AI Review Bundle (.zip · ~10 MB)
               </a>
             </Button>
+          </CardContent>
+        </Card>
+        <Card className="border-violet-300 bg-gradient-to-br from-violet-50 to-indigo-50/40">
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-2 text-lg text-violet-900">
+              <FolderGit2 className="h-5 w-5 text-violet-700" />
+              Portal source package
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <p className="leading-relaxed text-foreground/90">
+              The whole portal as a git-ready zip: engine, components, demo data, docs and workflows —
+              privacy-screened (no <code>.env</code>, no database, no personal data). Unzip, <code>git init</code>,
+              push to your own <strong>private</strong> repo and deploy — or skip the terminal with the
+              one-click <em>Push portal to repo</em> button in Deploy &amp; sync.
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              <Badge variant="outline" className="border-violet-300 bg-white text-violet-900">depersonalised engine + demo data</Badge>
+              <Badge variant="outline" className="border-violet-300 bg-white text-violet-900">.env excluded</Badge>
+              <Badge variant="outline" className="border-violet-300 bg-white text-violet-900">db excluded</Badge>
+            </div>
+            <Button asChild className="w-full bg-violet-700 hover:bg-violet-600">
+              <a href="/downloads/portal-source.zip" download
+                 onClick={() => onAudit("export.bundle", "portal-source.zip", "portal source package downloaded (git-ready, privacy-screened)", "notice")}>
+                <FolderGit2 className="mr-2 h-4 w-4" />
+                Download portal source (.zip)
+              </a>
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              Walkthrough: <code>docs/GITHUB-SETUP.md</code> inside the zip — create the repo, scope a fine-grained
+              token, push, then let GitHub Actions build-check and deploy.
+            </p>
           </CardContent>
         </Card>
       </div>

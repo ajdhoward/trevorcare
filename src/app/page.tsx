@@ -44,6 +44,9 @@ import {
   Rocket,
   Sparkles,
   X,
+  PhoneCall,
+  Gavel,
+  LogOut,
 } from "lucide-react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -78,6 +81,16 @@ import Life360Panel from "@/components/record/life360";
 import AiBrief from "@/components/record/aibrief";
 import Council from "@/components/record/council";
 import Deploy from "@/components/record/deploy";
+import Calls from "@/components/record/calls";
+import CareHub from "@/components/record/carehub";
+import {
+  type CallsData,
+} from "@/lib/calls";
+import { type TrackerStore, type TrackerExit, loadTracker, loadExits, saveTracker, saveExits } from "@/lib/tracker";
+import {
+  type MedReconStore, type MedException, loadMedRecon, loadMedExceptions,
+  saveMedRecon, saveMedExceptions, defaultMedRecon, MedRecon,
+} from "@/components/record/medrecon";
 import {
   type CareRecord,
   type DocInfo,
@@ -147,6 +160,7 @@ const TAB_GROUPS: { label: string; tabs: TabPerm[] }[] = [
     label: "Connect",
     tabs: [
       { id: "whatsapp", label: "WhatsApp & inbox", icon: <MessageSquareText className="h-4 w-4" />, perm: "view.whatsapp" },
+      { id: "calls", label: "Calls & evidence", icon: <PhoneCall className="h-4 w-4" />, perm: "view.calls" },
       { id: "share", label: "Share with advisers", icon: <Link2 className="h-4 w-4" />, perm: "view.share" },
       { id: "aibrief", label: "AI review bridge", icon: <Sparkles className="h-4 w-4" />, perm: "view.aibrief" },
     ],
@@ -162,6 +176,7 @@ const TAB_GROUPS: { label: string; tabs: TabPerm[] }[] = [
   {
     label: "Oversight & assurance",
     tabs: [
+      { id: "carehub", label: "Care Hub & legal", icon: <Gavel className="h-4 w-4" />, perm: "view.carehub" },
       { id: "alerts", label: "Alerts", icon: <Siren className="h-4 w-4" />, perm: "view.alerts" },
       { id: "audit", label: "Records audit", icon: <ShieldCheck className="h-4 w-4" />, perm: "view.records_audit" },
       { id: "social", label: "Social & comms", icon: <UsersRound className="h-4 w-4" />, perm: "view.social" },
@@ -193,6 +208,7 @@ export default function Home() {
   const [audit, setAudit] = useState<AuditData | null>(null);
   const [catalog, setCatalog] = useState<ApiCatalogData | null>(null);
   const [mum, setJane] = useState<MumInfo | null>(null);
+  const [callsData, setCallsData] = useState<CallsData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState("dashboard");
   const [watchKw, setWatchKw] = useState<string | undefined>(undefined);
@@ -228,6 +244,12 @@ export default function Home() {
   const [waProcessed, setWaProcessed] = useState<Record<string, boolean>>({});
   const [emailRoute, setEmailRoute] = useState<EmailRouteSettings | null>(null);
 
+  // batch-11 stores (tracker, medication reconciliation) — hydrated after mount
+  const [tracker, setTracker] = useState<TrackerStore | null>(null);
+  const [exits, setExits] = useState<TrackerExit[]>([]);
+  const [medRecon, setMedRecon] = useState<MedReconStore>(defaultMedRecon());
+  const [medExceptions, setMedExceptions] = useState<MedException[]>([]);
+
   const actorRef = useRef<SystemUser | null>(null);
   actorRef.current = actor;
 
@@ -255,6 +277,10 @@ export default function Home() {
     setWaMessages(loadWaCache());
     setWaProcessed(loadWaProcessed());
     setEmailRoute(loadEmailRoute());
+    setTracker(loadTracker());
+    setExits(loadExits());
+    setMedRecon(loadMedRecon());
+    setMedExceptions(loadMedExceptions());
   }, []);
 
   useEffect(() => {
@@ -287,8 +313,9 @@ export default function Home() {
           "/data/audit.json",
           "/data/api_catalog.json",
           "/data/mum.json",
+          "/data/calls.json",
         ];
-        const [r, d, w, fa, c, rec, sec, au, ac, jn] = await Promise.all(paths.map((p) => fetch(p)));
+        const [r, d, w, fa, c, rec, sec, au, ac, jn, ca] = await Promise.all(paths.map((p) => fetch(p)));
         if (!r.ok || !d.ok) throw new Error("Failed to load record data");
         if (!cancelled) {
           setRecord(await r.json());
@@ -301,6 +328,7 @@ export default function Home() {
           if (au.ok) setAudit(await au.json());
           if (ac.ok) setCatalog(await ac.json());
           if (jn.ok) setJane(await jn.json());
+          if (ca.ok) setCallsData(await ca.json());
         }
       } catch (e) {
         if (!cancelled) setError(String(e));
@@ -394,6 +422,33 @@ export default function Home() {
     saveEmailRoute(next);
   };
 
+  const changeTracker = (next: TrackerStore) => {
+    setTracker(next);
+    saveTracker(next);
+  };
+  const changeExits = (next: TrackerExit[]) => {
+    setExits(next);
+    saveExits(next);
+  };
+  const changeMedRecon = (next: MedReconStore) => {
+    setMedRecon(next);
+    saveMedRecon(next);
+  };
+  const changeMedExceptions = (next: MedException[]) => {
+    setMedExceptions(next);
+    saveMedExceptions(next);
+  };
+
+  const logout = async () => {
+    auditEvent("auth.logout", "portal session", `${actorRef.current?.name ?? "user"} signed out of the portal`);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      /* ignore */
+    }
+    window.location.assign("/login");
+  };
+
   const toggleTaskFromDashboard = (t: MyTask) => {
     if (!actorRef.current) return;
     const next = tasks.map((x) => (x.id === t.id ? { ...x, done: !x.done, doneAt: !x.done ? new Date().toISOString().slice(0, 10) : undefined } : x));
@@ -413,8 +468,13 @@ export default function Home() {
 
   const liveAlerts = useMemo(() => {
     if (!record || rules.length === 0) return [];
-    return evaluateAlerts(record, wellbeing, rules, alertState, { tasks, mumContacts });
-  }, [record, wellbeing, rules, alertState, tasks, mumContacts]);
+    return evaluateAlerts(record, wellbeing, rules, alertState, {
+      tasks,
+      mumContacts,
+      contactDaily: callsData?.contactDaily,
+      trackerExits: exits,
+    });
+  }, [record, wellbeing, rules, alertState, tasks, mumContacts, callsData, exits]);
   const newAlerts = liveAlerts.filter((a) => a.status !== "resolved" && a.status !== "ack");
 
   const visibleTabs = useMemo(
@@ -474,7 +534,7 @@ export default function Home() {
     );
   }
 
-  if (!record || !docs || !actor || !availability || !waSettings || !emailRoute) {
+  if (!record || !docs || !actor || !availability || !waSettings || !emailRoute || !tracker) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-3 bg-teal-50/40 px-6 text-center">
         <Loader2 className="h-8 w-8 animate-spin text-teal-700" />
@@ -606,6 +666,16 @@ export default function Home() {
                   <span className="sm:hidden">Export</span>
                 </Button>
               )}
+              <Button
+                onClick={logout}
+                size="sm"
+                variant="outline"
+                aria-label="Sign out of the portal"
+                title="Sign out (session cookie cleared on this device)"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="ml-1.5 hidden sm:inline">Sign out</span>
+              </Button>
             </div>
           </div>
         </header>
@@ -666,7 +736,14 @@ export default function Home() {
               />
             </TabsContent>
             <TabsContent value="life360">
-              <Life360Panel actorName={actor.name} onAudit={auditEvent} />
+              <Life360Panel
+                actorName={actor.name}
+                tracker={tracker}
+                onTrackerChange={changeTracker}
+                exits={exits}
+                onExitsChange={changeExits}
+                onAudit={auditEvent}
+              />
             </TabsContent>
 
             {/* ---------------- dad's care record ---------------- */}
@@ -678,6 +755,21 @@ export default function Home() {
             </TabsContent>
             <TabsContent value="medication">
               <Medication record={record} />
+              <div className="mt-6">
+                <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted-foreground">
+                  Reconciliation &amp; governance (Systems Review P2)
+                </h2>
+                <MedRecon
+                  store={medRecon}
+                  onStoreChange={changeMedRecon}
+                  exceptions={medExceptions}
+                  onExceptionsChange={changeMedExceptions}
+                  freeTextHits={record.med_events
+                    .filter((e) => /no medication|blister|duplicate|split/i.test(e.comments || ""))
+                    .map((e) => ({ date: e.date, comments: e.comments }))}
+                  onAudit={auditEvent}
+                />
+              </div>
             </TabsContent>
             <TabsContent value="watchlist">
               {analytics ? (
@@ -768,6 +860,13 @@ export default function Home() {
             <TabsContent value="share">
               <Share actorName={actor.name} onAudit={auditEvent} />
             </TabsContent>
+            <TabsContent value="calls">
+              {callsData ? (
+                <Calls data={callsData} actorName={actor.name} onAudit={auditEvent} />
+              ) : (
+                <p className="text-sm text-muted-foreground">Loading the calls log…</p>
+              )}
+            </TabsContent>
             <TabsContent value="aibrief">
               <AiBrief
                 record={record}
@@ -798,6 +897,16 @@ export default function Home() {
             </TabsContent>
 
             {/* ---------------- oversight & assurance ---------------- */}
+            <TabsContent value="carehub">
+              <CareHub
+                actorName={actor.name}
+                canManage={can(actor, "action.legal_manage")}
+                clientName={record.client.name}
+                clientDob={record.client.dob}
+                onAudit={auditEvent}
+                onNavigate={navigate}
+              />
+            </TabsContent>
             <TabsContent value="alerts">
               <AlertsCentre
                 record={record}

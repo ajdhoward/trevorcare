@@ -12,7 +12,9 @@ over-reaching, (e) device theft.
 
 | Control | Implementation |
 |---|---|
-| Least privilege by role | `src/lib/access.ts` — 6 roles × 37 permissions, lawful-basis noted per role; carers see only the shift view; tab + action gating throughout |
+| **Portal authentication gate** | Fail-closed middleware (`src/middleware.ts`) — every page, asset and API call needs a valid signed session cookie; unauthenticated page loads redirect to `/login`, APIs get 401. Password = `PORTAL_PASSWORD` secret (demo fallback shown on-screen while active); failed attempts throttled (5 / 10 min per IP). Sessions: HMAC-SHA256 signed cookie, HttpOnly, 30 days — sign/verify share one module (`src/lib/session.ts`) so the secret can never drift. `/share` keeps its separate, revocable, view-counted token gate |
+| Unpublish / rollback | `wrangler rollback` (instant) or `wrangler delete` (remove entirely); rotate `SESSION_SECRET` to invalidate every issued session at once |
+| Least privilege by role | `src/lib/access.ts` — 6 roles × 40 permissions, lawful-basis noted per role; carers see only the shift view; tab + action gating throughout |
 | Identity | Dev: acting-as switcher. Prod: **Cloudflare Access** (Zero Trust) in front of the portal + Turnstile on public endpoints; statuary partners get **time-boxed read-only views** (share tokens), never accounts |
 | Tamper evidence | `care-sysaudit-v1` hash-chained audit log (seq+prevHash+hash), verify + CSV/JSON export; production = D1 append-only + nightly R2 anchor |
 | Data minimisation | Carer/mobile roles don't see contacts; documents gated by `data.documents`; sensitivity classes in the API catalog (operational/health/personal/internal) |

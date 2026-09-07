@@ -42,6 +42,8 @@ export type Permission =
   | "view.council"
   | "view.deploy"
   | "view.kiosk"
+  | "view.calls"
+  | "view.carehub"
   | "data.contacts"
   | "data.documents"
   | "action.export"
@@ -54,7 +56,8 @@ export type Permission =
   | "action.wa_send"
   | "action.mum_log"
   | "action.share_manage"
-  | "action.ingest";
+  | "action.ingest"
+  | "action.legal_manage";
 
 export const ROLES: Record<RoleId, RoleDef> = {
   admin: {
@@ -103,10 +106,11 @@ export const ALL_PERMISSIONS: Permission[] = [
   "view.mytasks", "view.calendar", "view.lpa", "view.whatsapp", "view.mum",
   "view.familyvoice", "view.dcpi", "view.share", "view.life360", "view.aibrief",
   "view.council", "view.deploy", "view.kiosk",
+  "view.calls", "view.carehub",
   "data.contacts", "data.documents",
   "action.export", "action.comms_edit", "action.alerts_manage", "action.users_manage", "action.ai_use",
   "action.task_manage", "action.availability", "action.wa_send", "action.mum_log",
-  "action.share_manage", "action.ingest",
+  "action.share_manage", "action.ingest", "action.legal_manage",
 ];
 
 export const PERMISSION_LABELS: Record<Permission, string> = {
@@ -139,6 +143,8 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "view.council": "Council ASC policy & compliance watch",
   "view.deploy": "Deployment, GitHub sync & AI Gateway",
   "view.kiosk": "'My Day' tablet view (Dad)",
+  "view.calls": "Calls & evidence log (transcripts, highlights, contact spike)",
+  "view.carehub": "Care Hub & legal (case file, statutory letters, handoff register)",
   "data.contacts": "See contacts / next-of-kin details",
   "data.documents": "Open documents (care plan, risk assessments)",
   "action.export": "Download data & bundles",
@@ -152,6 +158,7 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "action.mum_log": "Log calls/emails & well-being for Mum's care",
   "action.share_manage": "Create & revoke shared views",
   "action.ingest": "Apply AI feedback into the portal",
+  "action.legal_manage": "Dispatch statutory letters & edit the handoff register",
 };
 
 const F = (p: Permission) => p;
@@ -166,10 +173,11 @@ export const ROLE_PERMISSIONS: Record<RoleId, Permission[]> = {
     "view.mytasks", "view.calendar", "view.lpa", "view.whatsapp", "view.mum",
     "view.familyvoice", "view.dcpi", "view.share", "view.life360", "view.aibrief",
     "view.council", "view.deploy", "view.kiosk",
+    "view.calls", "view.carehub",
     "data.contacts", "data.documents",
     "action.export", "action.comms_edit", "action.alerts_manage", "action.ai_use",
     "action.task_manage", "action.availability", "action.wa_send", "action.mum_log",
-    "action.share_manage", "action.ingest",
+    "action.share_manage", "action.ingest", "action.legal_manage",
   ],
   coordinator: [
     "view.overview", "view.visits", "view.medication", "view.wellbeing", "view.conditions",
@@ -189,6 +197,7 @@ export const ROLE_PERMISSIONS: Record<RoleId, Permission[]> = {
     "view.conditions", "view.recommendations", "view.records_audit", "view.social",
     "view.schedule", "view.documents", "view.alerts",
     "view.mytasks", "view.calendar", "view.council", "view.dcpi",
+    "view.calls", "view.carehub",
     "data.contacts", "data.documents",
     "action.export", "action.comms_edit",
   ],
@@ -197,6 +206,7 @@ export const ROLE_PERMISSIONS: Record<RoleId, Permission[]> = {
     "view.conditions", "view.recommendations", "view.records_audit", "view.schedule",
     "view.documents", "view.downloads", "view.api_catalog", "view.alerts", "view.access_audit",
     "view.council", "view.dcpi", "view.familyvoice",
+    "view.calls", "view.carehub",
     "data.documents",
     "action.export",
   ],

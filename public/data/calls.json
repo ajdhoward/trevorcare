@@ -1,0 +1,580 @@
+{
+ "generated": "2026-09-07",
+ "note": "Sample dataset (depersonalised). In a live deployment this log is built from the family's call archive: each call is logged with its transcript excerpt and evidence highlights. Numbers are fictional Ofcom drama ranges; agencies are generic.",
+ "coverage": {
+  "from": "2026-08-01",
+  "to": "2026-09-06"
+ },
+ "counts": {
+  "callsLogged": 20,
+  "archiveTotal": 250,
+  "archiveNote": "the full archive holds 250 recordings; these 20 are the manually corrected crisis-window subset shipped as sample data"
+ },
+ "calls": [
+  {
+   "id": "c-001",
+   "date": "2026-08-12",
+   "time": "10:12",
+   "direction": "outbound",
+   "number": "01632 960010",
+   "party": "ASC duty team",
+   "category": "Adult social care",
+   "subject": "Urgent request for temporary care — first of the day",
+   "durationMin": 14,
+   "transcript": "Caller explains that his father has been found at the bus stop in town with no idea why he was there, and asks for temporary care while the family recharges at 10am, 1pm and again mid-afternoon. The duty worker confirms the referral will go to the duty team and offers to raise it with the allocating team manager.",
+   "highlights": [
+    "Family rang at 10:00, 13:00 and again later the same day",
+    "Found-at-bus-stop incident described to a second agency",
+    "No named owner confirmed during the call"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-002",
+   "date": "2026-08-12",
+   "time": "13:05",
+   "direction": "inbound",
+   "number": "01632 960011",
+   "party": "ASC business support",
+   "category": "Adult social care",
+   "subject": "Call-back confirming voicemail routed to duty team",
+   "durationMin": 6,
+   "transcript": "Business support confirms the earlier message reached voicemail, that it has gone to the duty team after a morning conversation with the coordinator, and that the call will now be transferred. No timeframe is offered and the family is asked to note a new number.",
+   "highlights": [
+    "Handoff acknowledged verbally, no acceptance logged",
+    "Family asked to repeat identification details for the third time"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-003",
+   "date": "2026-08-12",
+   "time": "17:40",
+   "direction": "outbound",
+   "number": "01632 960012",
+   "party": "ASC out-of-hours team",
+   "category": "Adult social care",
+   "subject": "Evening escalation after office-hours silence",
+   "durationMin": 11,
+   "transcript": "Out-of-hours team confirms a referral has come through concerning the bus-stop incident earlier today. The caller re-explains the elopement pattern and the overnight risk. The team explains there is only one staff member on at night, that they do not visit, and suggests calling 999 if genuinely concerned.",
+   "highlights": [
+    "Out-of-hours inherited the case with no context",
+    "Advice was reactive: 'call 999 if you are really concerned'",
+    "No overnight visit capability offered"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-004",
+   "date": "2026-08-27",
+   "time": "09:30",
+   "direction": "inbound",
+   "number": "07700 900000",
+   "party": "Dad (his mobile)",
+   "category": "Family",
+   "subject": "Food delivery confusion — wants to write the delivery down",
+   "durationMin": 7,
+   "transcript": "Dad is agitated about a delivery and keeps asking which day it is. He wants to write the delivery time down although the family explains they will simply knock. He mentions his shopping list and asks about items he likes.",
+   "highlights": [
+    "AM/PM temporal disorientation visible in a routine call",
+    "Agitation triggered by an unstructured expectation"
+   ],
+   "escalated": false
+  },
+  {
+   "id": "c-005",
+   "date": "2026-08-27",
+   "time": "14:22",
+   "direction": "inbound",
+   "number": "07700 900000",
+   "party": "Dad (his mobile)",
+   "category": "Family",
+   "subject": "Jokes and iPhone help — mood bright",
+   "durationMin": 9,
+   "transcript": "Dad asks where to get more joke books, says the one sent last Sunday is 'a bit tame', and chatting is good. He mentions his old number when the call drops once.",
+   "highlights": [
+    "Presents as 'fine and chatting' — masking effect on a good hour",
+    "Longitudinal record needed to balance single-window impressions"
+   ],
+   "escalated": false
+  },
+  {
+   "id": "c-006",
+   "date": "2026-08-27",
+   "time": "16:48",
+   "direction": "inbound",
+   "number": "07700 900101",
+   "party": "Cousin (family)",
+   "category": "Family",
+   "subject": "Welfare check after tea-time visit",
+   "durationMin": 12,
+   "transcript": "Cousin reports she stopped in after collecting the dog, that Dad had a sleep and a drink of water, that the carer left at quarter to one and the next carer is due now. She felt his head, brought water, and describes him saying he feels all right but knows he is not right.",
+   "highlights": [
+    "Unmonitored gap between carer departures and family arrival",
+    "Dad self-reports: 'I know I'm not right'"
+   ],
+   "escalated": false
+  },
+  {
+   "id": "c-007",
+   "date": "2026-08-27",
+   "time": "21:05",
+   "direction": "outbound",
+   "number": "01632 960040",
+   "party": "The care agency coordinator",
+   "category": "Provider",
+   "subject": "Request continuity of carers + extra tea-time cover",
+   "durationMin": 15,
+   "transcript": "Family asks the coordinator for continuity of the carers who know him, and whether tea-time cover can be extended for a while until the review concludes. Coordinator says rota moves are unavoidable but will try, and promises to call back about escalation.",
+   "highlights": [
+    "Continuity request logged — 36 carers across the record so far",
+    "No timeframe offered for any review outcome"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-008",
+   "date": "2026-08-28",
+   "time": "11:15",
+   "direction": "outbound",
+   "number": "01632 960050",
+   "party": "GP surgery",
+   "category": "Primary care",
+   "subject": "Urine sample result and hydration concern",
+   "durationMin": 8,
+   "transcript": "The surgery confirms the urine sample came back negative. The family raises that dehydration keeps recurring and asks whether a care review can note the drinking pattern. Reception promises the GP will call back with any advice.",
+   "highlights": [
+    "UTI ruled out but hydration risk remains unaddressed",
+    "No clinical review triggered by repeated infections"
+   ],
+   "escalated": false
+  },
+  {
+   "id": "c-009",
+   "date": "2026-08-29",
+   "time": "10:02",
+   "direction": "outbound",
+   "number": "01632 960020",
+   "party": "District Nurse triage",
+   "category": "Community health",
+   "subject": "Referral for night-time disturbance — triage declined",
+   "durationMin": 9,
+   "transcript": "Triage explains the referral put through is not something the District Nurses can assist with; it is a social services section that would need to help arrange temporary care. The family is redirected for the third time in two days.",
+   "highlights": [
+    "Triage-and-signpost failure mode at the multi-agency boundary",
+    "Case bounced: no named owner across the perimeter"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-010",
+   "date": "2026-08-29",
+   "time": "12:40",
+   "direction": "outbound",
+   "number": "01632 960021",
+   "party": "Transfer of Care Hub",
+   "category": "Community health",
+   "subject": "Bus-stop crisis follow-up — queue, hold, redirect",
+   "durationMin": 17,
+   "transcript": "After a recorded queue message the hub confirms they do not arrange temporary social care and the family should go back to Adult Social Care. The family re-describes the bus-stop incident and the repeated calls since 10am. The hub advises calling the crisis team if concerned tonight.",
+   "highlights": [
+    "Fragment held by a second endpoint, still no owner",
+    "Family de facto integration layer for the system"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-011",
+   "date": "2026-08-29",
+   "time": "15:55",
+   "direction": "inbound",
+   "number": "01632 960031",
+   "party": "Mental health crisis line",
+   "category": "Community health",
+   "subject": "Brief check from the crisis line",
+   "durationMin": 6,
+   "transcript": "The caller says he has just spoken briefly to his father, that the carers are with him at the moment and say he is fine and interacting, and offers to let the family speak with the carers before calling back.",
+   "highlights": [
+    "Snapshot impression ('fine and chatting') recorded again",
+    "Masking effect: carers see a different presentation at a different hour"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-012",
+   "date": "2026-08-29",
+   "time": "19:20",
+   "direction": "inbound",
+   "number": "01632 960012",
+   "party": "ASC out-of-hours team",
+   "category": "Adult social care",
+   "subject": "Referral received — questions repeated from scratch",
+   "durationMin": 13,
+   "transcript": "Out-of-hours confirms a referral has come through and asks whether the concern is the bus-stop incident or something earlier today. The family explains the pattern since the Alzheimer's began, the rising frequency, and the recent urinary infection. No visit is offered; the case is noted.",
+   "highlights": [
+    "Out-of-hours inherited no context — full re-telling required",
+    "Pattern escalation described in the call record"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-013",
+   "date": "2026-08-31",
+   "time": "08:05",
+   "direction": "outbound",
+   "number": "01632 960010",
+   "party": "ASC duty team",
+   "category": "Adult social care",
+   "subject": "s117 aftercare question — transferred twice",
+   "durationMin": 21,
+   "transcript": "The caller asks about statutory aftercare entitlement and a residential placement. After twenty minutes and two internal transfers the family is asked to confirm their father's date of birth again, and the call ends with a promise that business support will connect the duty team.",
+   "highlights": [
+    "Statutory question unanswered after 20 minutes",
+    "Identification details re-taken at every endpoint"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-014",
+   "date": "2026-09-01",
+   "time": "09:40",
+   "direction": "inbound",
+   "number": "01632 960011",
+   "party": "ASC duty worker",
+   "category": "Adult social care",
+   "subject": "Duty worker call — HERB protocol offered while allocation waits",
+   "durationMin": 18,
+   "transcript": "The duty worker says he will speak to the allocating team manager today about getting somebody allocated. In the interim he offers the HERB protocol paperwork to complete and send to the police, acknowledging it feels reactive rather than proactive.",
+   "highlights": [
+    "8-week allocation gap acknowledged but not bypassed",
+    "Reactive interim measure offered in writing"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-015",
+   "date": "2026-09-01",
+   "time": "11:26",
+   "direction": "inbound",
+   "number": "01632 960020",
+   "party": "District Nurse triage",
+   "category": "Community health",
+   "subject": "Evening triage — referral not for district nursing",
+   "durationMin": 5,
+   "transcript": "Triage has seen the referral put through but confirms it is not anything District Nursing can assist with; a social services section would need to help get him into temporary care.",
+   "highlights": [
+    "Same failure mode as 29 Aug — unchanged after the weekend"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-016",
+   "date": "2026-09-01",
+   "time": "14:03",
+   "direction": "inbound",
+   "number": "01632 960031",
+   "party": "Mental health crisis team",
+   "category": "Community health",
+   "subject": "Carer report: fine and chatting during the visit",
+   "durationMin": 7,
+   "transcript": "The crisis team has spoken briefly to him; carers report he is interacting and chatting. The family asks what happens overnight when nobody is there and is told there is one staff member at night who cannot visit.",
+   "highlights": [
+    "Masking effect documented by a third service in one week",
+    "No overnight observation capability anywhere"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-017",
+   "date": "2026-09-03",
+   "time": "10:18",
+   "direction": "outbound",
+   "number": "01632 960040",
+   "party": "The care agency coordinator",
+   "category": "Provider",
+   "subject": "Missed green-button call and phone in coat pocket",
+   "durationMin": 10,
+   "transcript": "Family reports the green-button call was missed because his phone was in his coat pocket. The coordinator explains rota pressures and the family repeats the continuity request. Both agree the carers who know him notice when something is wrong.",
+   "highlights": [
+    "Redundant-visit glitches persist in the scheduling app",
+    "Continuity again requested — nothing logged system-wide"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-018",
+   "date": "2026-09-04",
+   "time": "09:12",
+   "direction": "inbound",
+   "number": "01632 960010",
+   "party": "ASC field worker",
+   "category": "Adult social care",
+   "subject": "Field worker call-back — chasing the review",
+   "durationMin": 16,
+   "transcript": "The field worker confirms she has spoken with the manager and had to chase again today because a promised call-back did not come. She reports the urine sample was negative and asks what additional things have been happening. The family describes him forgetting who his nephew was.",
+   "highlights": [
+    "Family chase required to obtain promised updates",
+    "New cognitive decline reported into the record"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-019",
+   "date": "2026-09-04",
+   "time": "12:30",
+   "direction": "outbound",
+   "number": "01632 960030",
+   "party": "Mental health crisis line",
+   "category": "Community health",
+   "subject": "Round-robins between endpoints described by the family",
+   "durationMin": 12,
+   "transcript": "The family describes being passed between the duty team, crisis team and out-of-hours with no single owner, and asks directly what the plan is tonight. The line explains its remit ends at signposting and suggests the GP or 999 for emergencies.",
+   "highlights": [
+    "'Round robin' multi-agency pattern stated verbatim",
+    "No plan for the coming night offered by any endpoint"
+   ],
+   "escalated": true
+  },
+  {
+   "id": "c-020",
+   "date": "2026-09-04",
+   "time": "17:45",
+   "direction": "inbound",
+   "number": "01632 960012",
+   "party": "ASC out-of-hours team",
+   "category": "Adult social care",
+   "subject": "Safeguarding referral voicemail — details retaken again",
+   "durationMin": 14,
+   "transcript": "The family leaves a formal safeguarding message: name, father's name, date of birth, and the fact that his cousin reported the bus-stop incident earlier. The message notes the urgent safeguarding issue since the last call and asks for a prioritised response.",
+   "highlights": [
+    "Safeguarding concern logged by voicemail at 17:45",
+    "Escalation clock started by the family, not the system"
+   ],
+   "escalated": true
+  }
+ ],
+ "contactDaily": [
+  {
+   "date": "2026-08-01",
+   "inbound": 5,
+   "outbound": 5,
+   "note": null
+  },
+  {
+   "date": "2026-08-02",
+   "inbound": 5,
+   "outbound": 4,
+   "note": null
+  },
+  {
+   "date": "2026-08-03",
+   "inbound": 6,
+   "outbound": 5,
+   "note": null
+  },
+  {
+   "date": "2026-08-04",
+   "inbound": 3,
+   "outbound": 2,
+   "note": null
+  },
+  {
+   "date": "2026-08-05",
+   "inbound": 6,
+   "outbound": 4,
+   "note": null
+  },
+  {
+   "date": "2026-08-06",
+   "inbound": 6,
+   "outbound": 2,
+   "note": null
+  },
+  {
+   "date": "2026-08-07",
+   "inbound": 2,
+   "outbound": 4,
+   "note": null
+  },
+  {
+   "date": "2026-08-08",
+   "inbound": 4,
+   "outbound": 2,
+   "note": null
+  },
+  {
+   "date": "2026-08-09",
+   "inbound": 2,
+   "outbound": 5,
+   "note": null
+  },
+  {
+   "date": "2026-08-10",
+   "inbound": 2,
+   "outbound": 5,
+   "note": null
+  },
+  {
+   "date": "2026-08-11",
+   "inbound": 5,
+   "outbound": 4,
+   "note": null
+  },
+  {
+   "date": "2026-08-12",
+   "inbound": 21,
+   "outbound": 12,
+   "note": "Spike day — 33 inbound calls across the family and agencies after the bus-stop crisis began"
+  },
+  {
+   "date": "2026-08-13",
+   "inbound": 6,
+   "outbound": 2,
+   "note": null
+  },
+  {
+   "date": "2026-08-14",
+   "inbound": 6,
+   "outbound": 1,
+   "note": null
+  },
+  {
+   "date": "2026-08-15",
+   "inbound": 6,
+   "outbound": 1,
+   "note": null
+  },
+  {
+   "date": "2026-08-16",
+   "inbound": 2,
+   "outbound": 1,
+   "note": null
+  },
+  {
+   "date": "2026-08-17",
+   "inbound": 3,
+   "outbound": 2,
+   "note": null
+  },
+  {
+   "date": "2026-08-18",
+   "inbound": 6,
+   "outbound": 1,
+   "note": null
+  },
+  {
+   "date": "2026-08-19",
+   "inbound": 5,
+   "outbound": 3,
+   "note": null
+  },
+  {
+   "date": "2026-08-20",
+   "inbound": 5,
+   "outbound": 5,
+   "note": null
+  },
+  {
+   "date": "2026-08-21",
+   "inbound": 3,
+   "outbound": 5,
+   "note": null
+  },
+  {
+   "date": "2026-08-22",
+   "inbound": 3,
+   "outbound": 3,
+   "note": null
+  },
+  {
+   "date": "2026-08-23",
+   "inbound": 5,
+   "outbound": 1,
+   "note": null
+  },
+  {
+   "date": "2026-08-24",
+   "inbound": 2,
+   "outbound": 4,
+   "note": null
+  },
+  {
+   "date": "2026-08-25",
+   "inbound": 4,
+   "outbound": 4,
+   "note": null
+  },
+  {
+   "date": "2026-08-26",
+   "inbound": 6,
+   "outbound": 1,
+   "note": null
+  },
+  {
+   "date": "2026-08-27",
+   "inbound": 10,
+   "outbound": 5,
+   "note": "Crisis window opens — welfare-check coordination"
+  },
+  {
+   "date": "2026-08-28",
+   "inbound": 9,
+   "outbound": 7,
+   "note": null
+  },
+  {
+   "date": "2026-08-29",
+   "inbound": 10,
+   "outbound": 3,
+   "note": "Multi-agency round-robin day"
+  },
+  {
+   "date": "2026-08-30",
+   "inbound": 7,
+   "outbound": 7,
+   "note": null
+  },
+  {
+   "date": "2026-08-31",
+   "inbound": 7,
+   "outbound": 6,
+   "note": null
+  },
+  {
+   "date": "2026-09-01",
+   "inbound": 7,
+   "outbound": 9,
+   "note": "Duty worker + triage + crisis line + out-of-hours"
+  },
+  {
+   "date": "2026-09-02",
+   "inbound": 10,
+   "outbound": 6,
+   "note": null
+  },
+  {
+   "date": "2026-09-03",
+   "inbound": 7,
+   "outbound": 3,
+   "note": null
+  },
+  {
+   "date": "2026-09-04",
+   "inbound": 6,
+   "outbound": 4,
+   "note": "Safeguarding voicemail day"
+  },
+  {
+   "date": "2026-09-05",
+   "inbound": 9,
+   "outbound": 3,
+   "note": null
+  },
+  {
+   "date": "2026-09-06",
+   "inbound": 13,
+   "outbound": 6,
+   "note": null
+  }
+ ]
+}

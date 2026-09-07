@@ -1,0 +1,240 @@
+{
+ "generated": "2026-09-07",
+ "caseFile": {
+  "title": "Transition case file — Dad (sample persona)",
+  "subtitle": "Domiciliary care record & move to a fully managed 24-hour placement",
+  "verdict": "The current domiciliary framework fails on all three tested axes — coverage, medication governance and multi-agency integration. The transition to a fully managed 24-hour residential placement is not a preference to be indulged; it is the only configuration on the table that matches the documented risk profile.",
+  "placementPreference": "A fully managed 24-hour residential placement; name your preferred home here (sample: 'the preferred home').",
+  "evidenceBase": [
+   "Sample record: 1,283 visits across 12 months with duration and outcome data (full archive: 373 notes over 92 days from 36 carers)",
+   "Sample call archive: 250 recordings, 31 Jul – 4 Sep, with 20 manually corrected crisis-window transcripts logged in Calls & evidence",
+   "Objective metrics: mean visit duration, night-gap exposure, medication exception counts, elopement pattern",
+   "Duty-team acknowledgements on record ('massively at risk') with no protective plan that followed"
+  ],
+  "coreMetrics": [
+   {
+    "label": "Mean visit duration",
+    "value": "≈28 min",
+    "detail": "roughly 1.9 hours of presence in a 24-hour day — ~22 hours unmonitored"
+   },
+   {
+    "label": "Uncovered span",
+    "value": "Overnight",
+    "detail": "concentrated exactly where sundowning and night-time disturbances are documented"
+   },
+   {
+    "label": "Carer continuity",
+    "value": "36 carers / 92 days",
+    "detail": "the average carer appears once — every visit re-establishes trust from zero"
+   },
+   {
+    "label": "Contact spike",
+    "value": "33 calls / day",
+    "detail": "documented leading indicator before the elopement crises"
+   }
+  ],
+  "provenance": "Sample data (depersonalised). Replace these cards with your own evidence: the structure (verdict → evidence base → metrics) is designed to open every assessment pack so reviewers start from the longitudinal record, not a 30-minute snapshot."
+ },
+ "actions": [
+  {
+   "id": "a-1",
+   "title": "Lodge the evidence pack and the residential placement request",
+   "detail": "Attach the Best Interests statement; state the preferred home in the covering letter. Use the statutory letters below to generate both documents.",
+   "owner": "Alex (LPA)",
+   "due": "2026-09-12",
+   "priority": "P1",
+   "linkTab": "carehub"
+  },
+  {
+   "id": "a-2",
+   "title": "Send the written s42 safeguarding enquiry request to Adult Social Care",
+   "detail": "Cite the duty-team acknowledgements and the documented elopement pattern. The 72-hour acknowledgement clock starts when the letter is marked as sent.",
+   "owner": "Alex (LPA)",
+   "due": "2026-09-12",
+   "priority": "P1",
+   "linkTab": "carehub"
+  },
+  {
+   "id": "a-3",
+   "title": "Verify detention history and, if established, serve the s117 aftercare demand",
+   "detail": "s117 duties are joint commissioners' duties (LA + ICB) and do not queue behind workforce shortages or the 8-week allocation gap.",
+   "owner": "Alex (LPA) + care coordinator",
+   "due": "2026-09-19",
+   "priority": "P1",
+   "linkTab": "carehub"
+  },
+  {
+   "id": "a-4",
+   "title": "Keep interim controls live: tracker worn and checked daily, alerts active, family logging discipline",
+   "detail": "Tracker status lives in Family circle; exit events feed the elopement theme and the safeguarding pack.",
+   "owner": "All family",
+   "due": "2026-09-08",
+   "priority": "P1",
+   "linkTab": "life360"
+  },
+  {
+   "id": "a-5",
+   "title": "Request pharmacist-led medication reconciliation",
+   "detail": "Single NOMAD cycle in the house at a time, weekly reconciliation, explicit no-splitting directive, PRN protocol with window authority. Track it in Medication → reconciliation.",
+   "owner": "Alex with GP & pharmacy",
+   "due": "2026-09-19",
+   "priority": "P2",
+   "linkTab": "medication"
+  },
+  {
+   "id": "a-6",
+   "title": "Send the multi-agency handoff protocol letter",
+   "detail": "Address to ASC, District Nursing, out-of-hours and the care provider. Template below; log every handoff in the register.",
+   "owner": "Alex (LPA)",
+   "due": "2026-09-19",
+   "priority": "P2",
+   "linkTab": "carehub"
+  },
+  {
+   "id": "a-7",
+   "title": "Deliver portal P1 items: call-spike alert, tracker exit log, statutory dossier generator",
+   "detail": "Shipped in this build — the three P1 backlog items from the Systems Review are live in the portal.",
+   "owner": "Portal build",
+   "due": "2026-09-21",
+   "priority": "P2",
+   "done": true,
+   "doneAt": "2026-09-07",
+   "linkTab": "carehub"
+  },
+  {
+   "id": "a-8",
+   "title": "Escalate in parallel if the s42 request is not substantively acknowledged",
+   "detail": "Day-10 trigger: ASC service manager → council complaints → CQC (provider medication governance) → Local Government & Social Care Ombudsman. Each escalation is generated from the templates and becomes part of the record.",
+   "owner": "Alex (LPA)",
+   "due": "2026-09-18",
+   "priority": "P3",
+   "linkTab": "carehub"
+  }
+ ],
+ "briefings": [
+  {
+   "id": "b-mask",
+   "title": "The masking effect and what it invalidates",
+   "tag": "Empathy & UX",
+   "body": [
+    "In brief face-to-face assessments the subject presents as highly capable — 'fine and chatting' — systematically masking deep cognitive deficits from transient assessors. Masking is not deception; it is a preserved social skill running on intact long-term pathways while the damaged encoding machinery fails off-camera.",
+    "The systemic effect is corrosive: point-in-time assessments — needs reviews, capacity screens, placement funding panels — systematically under-score needs, and the family's contemporaneous account is discounted because the assessor's 30-minute snapshot showed a pleasant, articulate man.",
+    "Design rule: longitudinal multi-carer evidence must outrank single-window observation in every assessment. Assess at the worst hours, verify glasses and hearing aids first, and use structured context-cued prompts over open recall questions."
+   ]
+  },
+  {
+   "id": "b-dom",
+   "title": "Why the 4-visit domiciliary structure is structurally broken",
+   "tag": "Feature audit",
+   "body": [
+    "Arithmetic: four calls at a ~28-minute mean provide roughly 1.9 hours of presence in a 24-hour day. Temporal: the uncovered span concentrates over night, exactly where sundowning and parasomnolent disturbances are documented. Reliability: scheduling-app glitches failed to cancel redundant visits, producing duplicate calls while genuine gaps persisted.",
+    "Continuity fails too: with the average carer appearing once in the record, every visit re-establishes trust from zero and every unfamiliar face is itself an agitation trigger.",
+    "Verdict: this is a model mismatch, not a staffing level to be tuned. The correct engineering response is the transition to a fully managed 24-hour placement, with interim controls (tracker, alerting, disciplined logging) kept live until the move completes."
+   ]
+  },
+  {
+   "id": "b-meds",
+   "title": "Medication governance: operating outside clinical instruction",
+   "tag": "Feature audit",
+   "body": [
+    "The pathway assumes a cognitively able person self-administering from a monitored tray between visits. The record shows blister packs found empty at call time, a fresh pack erroneously opened, tablet-splitting including of controlled substances, and duplicate packs in the house simultaneously.",
+    "Two governance failures sit beneath the incidents: carers forced into ad-hoc clinical decisions for which they have no instruction, and PRN analgesia trapped in rigid call-time windows — pain peaks between licensed administration slots and relief is withheld exactly when needed.",
+    "Remediation: a single pharmacist-led NOMAD cycle, an explicit no-splitting directive escalated to the prescriber, a PRN protocol with window authority, and structured eMAR exception logging so patterns surface on day two, not month eleven."
+   ]
+  },
+  {
+   "id": "b-spike",
+   "title": "The 33-call day: contact volume as a leading indicator",
+   "tag": "Early warning",
+   "body": [
+    "A day on which the family places 33 calls is a day on which acute cognitive decompensation is already underway; the elopement crises followed within that window. Family contact volume is not noise to be managed — it can be instrumented, thresholded and answered with a defined operational response.",
+    "The rule: alert when daily inbound contacts exceed 3× the trailing 14-day mean (floor 2/day), cross-checked against night-gap exposure, pain/PRN flags, sundowning-window agitation and tracker exit events.",
+    "Response ladder: same-day welfare check (double-up visit) → named coordinator notified → locator information refreshed → family group pinged. Each step logged, so the response to the next spike day is measured in minutes, not memoirs."
+   ]
+  },
+  {
+   "id": "b-statutory",
+   "title": "The statutory pivot: s42, s117 and Best Interests",
+   "tag": "Safeguarding",
+   "body": [
+    "Section 42 Care Act 2014: where there is reasonable cause to suspect an adult with care and support needs is experiencing or at risk of abuse or neglect and is unable to protect himself, the local authority must cause an enquiry. A man documented as 'massively at risk' with a proven elopement pattern and medication failures is precisely the fact pattern s42 exists for.",
+    "Section 117 Mental Health Act: where the subject is or has been detained (s3), aftercare is a statutory entitlement that neither expires with the detention nor depends on waiting lists; it can lawfully fund and mandate the residential placement — and does not queue behind the 8-week allocation gap.",
+    "Best Interests (s4 Mental Capacity Act 2005): the transition is framed as the attorneys' Best Interests determination, with the evidence pack lodged as supporting documentation and a CHC checklist requested in parallel so funding is resolved inside the process."
+   ]
+  }
+ ],
+ "runbooks": [
+  {
+   "id": "r-tracker",
+   "title": "Tracker fitting & daily check (5 steps)",
+   "steps": [
+    "1. Charge fully, then fit on the non-dominant wrist with the locking strap — check you cannot slide a finger under the band.",
+    "2. Pair with the family app, confirm the crowd-sourced network shows a last-seen location, and log the first exit test.",
+    "3. Add a daily battery check to the family routine (wristwatch battery ≈ 1 year; app battery weekly).",
+    "4. Log every real exit event in the tracker log with last-seen location and battery level.",
+    "5. Record the honest boundary: this logs location after an exit — it does not prevent one and discharges no statutory duty."
+   ]
+  },
+  {
+   "id": "r-ooh",
+   "title": "Out-of-hours pack — lodge with the hub in advance",
+   "steps": [
+    "Triggers: what 'concerning' looks like tonight (exits, unrousable episodes, shouting from windows).",
+    "Current medication status: single NOMAD cycle, PRN protocol, last reconciliation date.",
+    "Elopement risk summary: the pattern, the two crises, and what worked.",
+    "Locator information: tracker status, Life360 circle, key-safe location.",
+    "Family contacts: who to ring first, in order, with the agreed email/phone protocol."
+   ]
+  },
+  {
+   "id": "r-handoff",
+   "title": "Warm handoff protocol — the six rules",
+   "steps": [
+    "1. Warm handoff rule: verbal plus written acceptance logged before closure; an unaccepted handoff is never a closure.",
+    "2. Pre-agreed OOH pack lodged with the hub in advance (see the OOH runbook).",
+    "3. The duty team remains accountable in law until allocation; every chase letter cites this.",
+    "4. Destination team confirms receipt and first-visit date within 24 hours.",
+    "5. Escalation clock: no substantive response in 4 working hours → service manager; 24 hours → s42 route.",
+    "6. Multi-agency review within 72 hours of any elopement or overnight exposure event, minutes lodged in the shared record."
+   ]
+  }
+ ],
+ "letters": [
+  {
+   "id": "l-s42",
+   "key": "s42",
+   "title": "Section 42 safeguarding enquiry request",
+   "statute": "Care Act 2014, s42",
+   "clockHours": 72,
+   "recipient": "Adult Social Care — safeguarding team",
+   "body": "Dear Safeguarding Team,\n\nI am the attorney for health & welfare and property & financial affairs for {{client}} (DOB {{dob}}) under registered Lasting Powers of Attorney, and I am writing to request formally that the local authority cause a safeguarding enquiry under section 42 of the Care Act 2014.\n\nThere is reasonable cause to suspect that an adult with care and support needs is experiencing or at risk of abuse or neglect — including self-neglect and the risk of harm from an unmitigated elopement pattern — and that he is unable to protect himself. The documented evidence includes:\n\n• A mean visit duration of approximately 28 minutes across a 12-month record, leaving approximately 22 hours a day without monitoring, including every night.\n• A proven elopement pattern: the August ginnel incident and the September bus-stop crisis, both contemporaneously recorded.\n• Documented medication-administration failures: tablet-splitting, missed doses and duplicate blister packs in the house simultaneously.\n• Your own duty team's recorded acknowledgement that he is 'massively at risk', with no protective plan that followed.\n\nUnder s42(1) the local authority MUST cause an enquiry where it has reasonable cause to suspect these circumstances. I ask for:\n\n1. Written acknowledgement of this request within 72 hours (by {{clockDate}}).\n2. A named enquiry officer and a target date for the s42 decision.\n3. Confirmation that interim protective measures are in place while the enquiry proceeds.\n\nThe full evidence pack (coverage analysis, medication exception log, elopement record and call chronology) is available and will be lodged with the Best Interests statement.\n\nYours faithfully,\n{{attorney}}\nAttorney under registered LPA — {{today}}"
+  },
+  {
+   "id": "l-s117",
+   "key": "s117",
+   "title": "Section 117 aftercare demand",
+   "statute": "Mental Health Act 1983, s117",
+   "clockHours": 168,
+   "recipient": "Local Authority & ICB — joint commissioners",
+   "body": "Dear Commissioners,\n\nI am the attorney for {{client}} (DOB {{dob}}) and I am writing regarding his entitlement to aftercare services under section 117 of the Mental Health Act 1983.\n\n{{detentionParagraph}}\n\nSection 117 imposes a joint duty on the local authority and the Integrated Care Board to provide aftercare services — including, where assessed as needed, residential placement — to persons who have been detained under s3. The duty:\n\n• is a statutory entitlement that neither expires with the detention nor depends on waiting lists;\n• is not discharged by workforce shortages, and does not queue behind the current 8-week social-worker allocation gap;\n• can lawfully fund and mandate the fully managed 24-hour residential placement his documented risk profile requires.\n\nI therefore ask the joint commissioners to:\n\n1. Confirm the detention history and the s117 entitlement within 7 days (by {{clockDate}}).\n2. Convene a joint s117 care-planning meeting within 14 days.\n3. Confirm funding responsibility for the placement pending that meeting.\n\nThe evidence pack (coverage analysis, medication failures, elopement record and call chronology) accompanies the Best Interests statement.\n\nYours faithfully,\n{{attorney}}\nAttorney under registered LPA — {{today}}"
+  },
+  {
+   "id": "l-bi",
+   "key": "best-interests",
+   "title": "Best Interests placement statement",
+   "statute": "Mental Capacity Act 2005, s4",
+   "clockHours": 0,
+   "recipient": "Adult Social Care — review team",
+   "body": "Dear Review Team,\n\nAs the attorneys for {{client}} (DOB {{dob}}), acting under section 4 of the Mental Capacity Act 2005, we have made the following Best Interests determination: that his welfare requires a fully managed 24-hour residential placement. Our preferred placement is {{preferredHome}}; we are open to any equivalent setting that meets the risk profile.\n\nThe determination rests on the documented record rather than any single observation:\n\n• Coverage: a mean visit of approximately 28 minutes across four daily domiciliary calls — approximately 1.9 hours of presence against 24 hours of need, with the uncovered span concentrated overnight where risk is highest.\n• Medication governance: administration operating outside any clinical instruction set, with duplicate packs and forced tablet-splitting documented.\n• Multi-agency integration: critical handoffs bounced between endpoints with no named owner, leaving overnight exposure.\n• His own presentation: he says he does not want to go in when asked, but the longitudinal record and the assessors' masking-effect guidance show this answer is a fixed response, not a settled wish.\n\nWe ask that the placement request be processed with the evidence pack attached, and that a CHC checklist be requested in parallel so the funding question is resolved inside the process rather than after it.\n\nYours faithfully,\n{{attorney}}\nAttorney under registered LPA — {{today}}"
+  },
+  {
+   "id": "l-handoff",
+   "key": "handoff-protocol",
+   "title": "Multi-agency handoff protocol letter",
+   "statute": "Agreed protocol — Care Act s42(2) cooperation duty",
+   "clockHours": 0,
+   "recipient": "ASC, District Nursing, out-of-hours & the care provider",
+   "body": "Dear Colleagues,\n\nFollowing the documented overnight exposure of {{client}} (DOB {{dob}}) during multi-agency handoffs, we ask all parties to adopt the following protocol for every handoff touching his care. The protocol makes non-acceptance of responsibility visible, time-stamped and escalatable; it imposes no duty beyond those already in law, including the s42(2) cooperation duty.\n\n1. Warm handoff rule: verbal plus written acceptance logged before closure; an unaccepted handoff is never a closure.\n2. Pre-agreed out-of-hours pack: triggers, current medication status, elopement risk, locator information and family contacts lodged with the hub in advance.\n3. Accountability until allocation: the duty team remains accountable in law until a social worker is allocated; every chase letter cites this.\n4. 24-hour receipt confirmation: the destination team confirms receipt and the first-visit date within 24 hours.\n5. Escalation clock: no substantive response in 4 working hours → service manager; 24 hours → the s42 safeguarding route.\n6. Learning loop: multi-agency review within 72 hours of any elopement or overnight exposure event, minutes lodged in the shared record.\n\nPlease confirm adoption, or state your preferred alternative, within 10 working days (by {{clockDate}}). Every handoff under this protocol is logged in the family's shared chronology.\n\nYours faithfully,\n{{attorney}}\nAttorney under registered LPA — {{today}}"
+  }
+ ]
+}

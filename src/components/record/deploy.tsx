@@ -14,8 +14,8 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Cloud, CloudUpload, Copy, ExternalLink, GitBranch, Github, KeyRound, Link2, Rocket, ShieldCheck, Sparkles, Workflow,
-  BadgeCheck,
+  Cloud, CloudUpload, Copy, ExternalLink, GitBranch, Github, KeyRound, Link2, Loader2, Rocket, ShieldCheck, Sparkles, Workflow,
+  BadgeCheck, Database, HardDrive, Info,
 } from "lucide-react";
 import type { SysAuditAction } from "@/lib/auditlog";
 
@@ -70,6 +70,11 @@ function CopyRow({ text, label }: { text: string; label?: string }) {
 export default function Deploy({ actorName, onAudit }: DeployProps) {
   const [state, setState] = useState<DeployState>(DEFAULTS);
   const [step, setStep] = useState(1);
+  const [pushToken, setPushToken] = useState("");
+  const [pushBranch, setPushBranch] = useState("main");
+  const [pushing, setPushing] = useState(false);
+  const [pushMsg, setPushMsg] = useState<string | null>(null);
+  const [pushErr, setPushErr] = useState<string | null>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -119,6 +124,31 @@ export default function Deploy({ actorName, onAudit }: DeployProps) {
     } catch { /* storage unavailable */ }
   };
 
+  const pushToRepo = async () => {
+    setPushing(true);
+    setPushMsg(null);
+    setPushErr(null);
+    try {
+      const res = await fetch("/api/push", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ repoUrl: state.repoUrl, token: pushToken, branch: pushBranch, force: true }),
+      });
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string; error?: string };
+      if (!res.ok || !json.ok) {
+        setPushErr(json.error || `Push failed (HTTP ${res.status}).`);
+      } else {
+        setPushMsg(json.message || "Pushed.");
+        setPushToken("");
+        onAudit("repo.push", state.repoUrl, `portal pushed to the GitHub repo (branch ${pushBranch}) — token used once, not stored`, "notice");
+      }
+    } catch (e) {
+      setPushErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setPushing(false);
+    }
+  };
+
   const steps = [
     { n: 1, title: "Push this portal to your GitHub", icon: <Github className="h-4 w-4" /> },
     { n: 2, title: "One-click Deploy to Cloudflare", icon: <Rocket className="h-4 w-4" /> },
@@ -154,22 +184,48 @@ export default function Deploy({ actorName, onAudit }: DeployProps) {
       {step === 1 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm"><Github className="h-4 w-4" /> 1 · Push to GitHub</CardTitle>
-            <CardDescription>The repo is the single source of truth: Cloudflare builds from it, and the AI workspace syncs into it.</CardDescription>
+            <CardTitle className="flex items-center gap-2 text-sm"><Github className="h-4 w-4" /> 1 · Push portal to repo (one click)</CardTitle>
+            <CardDescription>
+              The repo is the single source of truth: Cloudflare builds from it, and the AI workspace syncs into it.
+              Full walkthrough in <code>docs/GITHUB-SETUP.md</code>.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
+            <div className="grid gap-2 rounded-xl border bg-teal-50/40 p-3 text-xs dark:bg-teal-950/10">
+              <p><span className="font-semibold">Step 1 —</span> Create an empty <strong>private</strong> repo on GitHub (no README / .gitignore / licence — it must start empty).</p>
+              <p><span className="font-semibold">Step 2 —</span> Settings → Developer settings → Personal access tokens → <strong>Fine-grained tokens</strong> → generate a token with <em>Repository access: Only select repositories</em> (this repo) and <em>Contents: Read and write</em>. Nothing else — you can revoke it the moment the push finishes.</p>
+              <p><span className="font-semibold">Step 3 —</span> Paste the repo URL + the token below and press <em>Push portal to repo</em>. The token is used for this one request and never stored; .env and the database are excluded by .gitignore.</p>
+            </div>
             <div>
-              <Label htmlFor="repo">Your repository URL (create an empty <strong>private</strong> repo first)</Label>
+              <Label htmlFor="repo">Your repository URL</Label>
               <div className="mt-1.5 flex flex-col gap-2 sm:flex-row">
-                <Input id="repo" value={state.repoUrl} onChange={(e) => patch({ repoUrl: e.target.value })} placeholder="https://github.com/yourname/haven360" />
-                <a href={deployBtnUrl || "https://github.com/new"} target="_blank" rel="noreferrer">
-                  <Button variant="outline" className="w-full sm:w-auto"><ExternalLink className="mr-1.5 h-4 w-4" /> {repo ? "Open repo" : "Create new repo"}</Button>
+                <Input id="repo" value={state.repoUrl} onChange={(e) => patch({ repoUrl: e.target.value })} placeholder="https://github.com/yourname/family-care-hub" />
+                <a href={repo ? `https://github.com/new` : "https://github.com/new"} target="_blank" rel="noreferrer">
+                  <Button variant="outline" className="w-full sm:w-auto"><ExternalLink className="mr-1.5 h-4 w-4" /> New repo</Button>
                 </a>
               </div>
               <p className="mt-1.5 text-xs text-muted-foreground">Private repo — the portal holds personal data; never make it public.</p>
             </div>
-            <CopyRow label="Run in this workspace (or ask the AI to do it)" text={`git init && git add -A && git commit -m "Haven 360 family care portal"\ngh repo create haven360 --private --source=. --push\n# or: git remote add origin <your-repo-url> && git push -u origin main`} />
-            <p className="text-xs text-muted-foreground">Alternatively use <code>scripts/github_sync.sh</code> — it commits the workspace state, appends the worklog and pushes in one step.</p>
+            <div className="grid gap-2 sm:grid-cols-3">
+              <div className="sm:col-span-2">
+                <Label htmlFor="pat">GitHub token (fine-grained, this repo only)</Label>
+                <Input id="pat" type="password" value={pushToken} onChange={(e) => setPushToken(e.target.value)} className="mt-1.5 font-mono text-xs" placeholder="github_pat_…" autoComplete="off" />
+              </div>
+              <div>
+                <Label htmlFor="branch">Branch</Label>
+                <Input id="branch" value={pushBranch} onChange={(e) => setPushBranch(e.target.value)} className="mt-1.5" />
+              </div>
+            </div>
+            <Button className="bg-teal-800 hover:bg-teal-700" disabled={pushing || !state.repoUrl.trim() || !pushToken.trim()} onClick={pushToRepo}>
+              {pushing ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Github className="mr-1.5 h-4 w-4" />}
+              Push portal to repo
+            </Button>
+            {pushMsg && <p className="rounded-lg border border-emerald-300 bg-emerald-50/60 p-2.5 text-xs text-emerald-900">{pushMsg}</p>}
+            {pushErr && <p className="rounded-lg border border-rose-300 bg-rose-50/60 p-2.5 text-xs text-rose-900">{pushErr}</p>}
+            <p className="text-[11px] text-muted-foreground">
+              Prefer the terminal? <code>git remote add origin &lt;url&gt; &amp;&amp; git push -u origin main</code> does the same.
+              After the first push, GitHub Actions (step 5) build-checks every change and can deploy the AI worker to Cloudflare automatically.
+            </p>
           </CardContent>
         </Card>
       )}
@@ -351,6 +407,32 @@ export default function Deploy({ actorName, onAudit }: DeployProps) {
           </CardContent>
         </Card>
       )}
+
+      <Card className="border-amber-200 bg-amber-50/40">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base text-amber-900">
+            <HardDrive className="h-4 w-4 text-amber-700" /> Storage decision — Google Drive vs Cloudflare (researched)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm">
+          <p className="leading-relaxed">
+            <span className="font-semibold">Decision: don&apos;t glue Google Drive onto the Cloudflare deployment.</span>
+            The researched cons outweigh the one convenience: Drive API rate-limits and throttling sit awkwardly behind
+            Workers&apos; CPU limits, Drive file streaming isn&apos;t designed as a document backend, mixed ToS on proxying
+            personal data through automation accounts is a UK-GDPR headache, and every Worker hop adds latency and egress
+            cost — for storage the platform already gives us <Badge variant="outline" className="mx-0.5 px-1 py-0 text-[10px]">R2</Badge>
+            with zero egress fees and UK location pinning.
+          </p>
+          <ul className="ml-4 list-disc space-y-1 text-xs text-muted-foreground">
+            <li>Documents stay in the portal&apos;s own storage (R2 in production, /downloads in this build) — one permission model, one audit trail.</li>
+            <li>Drive remains fine as a <em>family-side</em> archive — just not wired into the app&apos;s request path.</li>
+            <li>If you ever want a sync, run it as a scheduled out-of-band job, not an inline Worker fetch.</li>
+          </ul>
+          <p className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
+            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" /> Recorded here so the decision and its reasoning survive — see docs/DEPLOYMENT.md §Storage.
+          </p>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="flex items-start gap-2 pt-4">

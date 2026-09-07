@@ -5,6 +5,7 @@
 
 import type { CareRecord, WellbeingData } from "@/lib/record";
 import type { MyTask, MumContact } from "@/lib/family";
+import type { ContactDay } from "@/lib/calls";
 
 export type MetricId =
   | "adherence_7d"
@@ -18,7 +19,8 @@ export type MetricId =
   | "visit_gap_hours"
   | "coverage_7d"
   | "tasks_overdue"
-  | "mum_contact_gap";
+  | "mum_contact_gap"
+  | "contact_spike";
 
 export type AlertSeverity = "critical" | "warning" | "info";
 
@@ -103,6 +105,10 @@ export const METRICS: Record<
     label: "Days since last contact with Mum's home", unit: "days", dir: "above", window: false, linkTab: "mum",
     help: "Fires when no call, email, visit or video contact with Mum's care home has been logged within the threshold — protects the agreed contact cadence.",
   },
+  contact_spike: {
+    label: "Inbound contacts exceed X× the trailing 14-day mean", unit: "× mean", dir: "above", window: true, linkTab: "calls",
+    help: "Early-warning rule (Systems Review §5.1): a day on which the family places far more calls than usual is a day on which acute decompensation is underway. Set X=3 for the documented 33-call-day rule; a floor of 2 contacts/day applies to quiet periods. Composite confirmation is attached automatically (pain/confusion flags, visit gap, tracker exits).",
+  },
 };
 
 export const FLAG_THEME_KEYS: { k: string; label: string }[] = [
@@ -137,6 +143,7 @@ export function defaultRules(): AlertRule[] {
     { id: "r-cov", label: "Fewer than 20 visits scheduled next 7 days", metric: "coverage_7d", threshold: 20, days: 0, severity: "warning", enabled: true, email: false, created: t },
     { id: "r-tasks", label: "3+ family tasks overdue", metric: "tasks_overdue", threshold: 3, days: 0, severity: "warning", enabled: true, email: false, created: t },
     { id: "r-mum", label: "No contact with Mum's home for 7+ days", metric: "mum_contact_gap", threshold: 7, days: 0, severity: "warning", enabled: true, email: true, created: t },
+    { id: "r-spike", label: "Inbound contacts exceed 3× the trailing 14-day mean", metric: "contact_spike", threshold: 3, days: 14, severity: "critical", enabled: true, email: true, created: t },
   ];
 }
 
@@ -149,7 +156,14 @@ export function loadRules(): AlertRule[] {
     const raw = localStorage.getItem(K_RULES);
     if (!raw) return defaultRules();
     const v = JSON.parse(raw) as AlertRule[];
-    return Array.isArray(v) && v.length ? v : defaultRules();
+    let rules = Array.isArray(v) && v.length ? v : defaultRules();
+    // migration: append new default rules that shipped after the user's saved set
+    for (const d of defaultRules()) {
+      if (d.metric === "contact_spike" && !rules.some((r) => r.metric === "contact_spike")) {
+        rules = [...rules, d];
+      }
+    }
+    return rules;
   } catch {
     return defaultRules();
   }
@@ -185,6 +199,8 @@ function dayStr(d: Date): string {
 export interface AlertExtra {
   tasks?: MyTask[];
   mumContacts?: MumContact[];
+  contactDaily?: ContactDay[];
+  trackerExits?: { ts: string }[];
 }
 
 export function evaluateAlerts(
@@ -291,6 +307,31 @@ export function evaluateAlerts(
           value = Math.max(0, diff);
           evidence.push(`Last logged contact: ${last.date} (${last.type} with ${last.who || "home"})`);
         }
+      } else if (rule.metric === "contact_spike") {
+        const daily = (extra?.contactDaily ?? []).slice().sort((a, b) => a.date.localeCompare(b.date));
+        if (daily.length < 3) {
+          continue; // not enough telemetry yet
+        }
+        const last = daily[daily.length - 1];
+        const window14 = daily.filter((d) => d.date < last.date).slice(-rule.days || -14);
+        const meanRaw = window14.length ? window14.reduce((a, d) => a + d.inbound, 0) / window14.length : 0;
+        const floorApplied = meanRaw < 2;
+        const mean = floorApplied ? 2 : meanRaw;
+        value = mean > 0 ? Math.round((last.inbound / mean) * 100) / 100 : 0;
+        evidence.push(
+          `${last.date}: ${last.inbound} inbound contacts vs trailing ${window14.length}-day mean ${meanRaw.toFixed(1)}` +
+            (floorApplied ? " (floor 2/day applied)" : "")
+        );
+        if (last.note) evidence.push(`Day note: ${last.note}`);
+        // composite confirmation — the objective signals the portal already tracks
+        const cutoff = dayStr(new Date(now.getTime() - 7 * 86400000));
+        const pain = record.flags.filter((f) => f.date >= cutoff && f.kw.some((k) => k.includes("pain"))).length;
+        const confusion = record.flags.filter((f) => f.date >= cutoff && f.kw.some((k) => k.includes("confus"))).length;
+        if (pain) evidence.push(`Composite: ${pain} pain flag(s) in the last 7 days`);
+        if (confusion) evidence.push(`Composite: ${confusion} confusion flag(s) in the last 7 days`);
+        const lastDone = record.hist.find((v2) => /complete/i.test(v2.status));
+        if (lastDone) evidence.push(`Composite: last completed visit recorded ${lastDone.date}`);
+        if (extra?.trackerExits?.length) evidence.push(`Composite: ${extra.trackerExits.length} tracker exit event(s) on file`);
       }
     } catch {
       continue;
@@ -299,14 +340,14 @@ export function evaluateAlerts(
     if (value === null) continue;
     const hit = m.dir === "above" ? value > rule.threshold : value < rule.threshold;
     if (!hit) continue;
-    const key = `${rule.id}:${rule.metric === "visit_gap_hours" || rule.metric === "wellbeing_below" || rule.metric === "wellbeing_drop" || rule.metric === "coverage_7d" || rule.metric === "tasks_overdue" || rule.metric === "mum_contact_gap" ? today : windowEnd}`;
+    const key = `${rule.id}:${rule.metric === "visit_gap_hours" || rule.metric === "wellbeing_below" || rule.metric === "wellbeing_drop" || rule.metric === "coverage_7d" || rule.metric === "tasks_overdue" || rule.metric === "mum_contact_gap" || rule.metric === "contact_spike" ? today : windowEnd}`;
     const t = touch(key);
     firing.push({
       key,
       ruleId: rule.id,
       label: rule.label,
       severity: rule.severity,
-      message: `${rule.label} — currently ${value.toFixed(rule.metric === "adherence_7d" ? 1 : 0)} ${m.unit}.`,
+      message: `${rule.label} — currently ${value.toFixed(rule.metric === "adherence_7d" || rule.metric === "contact_spike" ? 2 : 0)} ${m.unit}.`,
       evidence,
       linkTab: m.linkTab,
       firstTs: t.firstTs,

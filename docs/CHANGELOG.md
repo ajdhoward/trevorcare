@@ -3,6 +3,49 @@
 Every batch appends here (and to worklog.md) — the docs say current-truth,
 this file says history.
 
+## Batch 11 — 07 Sep 2026 (this release)
+
+**Systems-Review delivery + security gate + push-to-repo pipeline**
+
+All five backlog items from the End-to-End System Review are now live, plus
+the security gate and the one-click GitHub pipeline — all on sample data.
+
+- **Authentication gate** (P0): fail-closed middleware + `/login` +
+  `/api/auth/*`; signed HttpOnly session cookie (30 days) with context-aware
+  attributes (Lax on plain HTTP, `None; Secure; Partitioned` in production
+  iframes); brute-force throttling; header sign-out; `PORTAL_PASSWORD` /
+  `SESSION_SECRET` secrets (`.env.example`).
+- **Calls & evidence tab** (Connect group): searchable transcripts with
+  evidence highlights and audited copying; contact-volume early-warning panel
+  (3× trailing-14-day-mean rule, floor 2/day) with the documented 33-call-day
+  spike as a worked example and the four-step response ladder.
+- **Care Hub & legal tab** (Oversight group): transition case file (verdict →
+  evidence → core metrics), tickable prioritised next actions (owners + due
+  dates), knowledge briefings & runbooks, **statutory dossier generator**
+  (s42 request, s117 aftercare demand, Best Interests statement, handoff
+  protocol letter — placeholders auto-filled, acknowledgement clocks with
+  dispatch log + escalation states), **agency handoff register** (acceptance
+  tracking with automatic 4-working-hour / 24-hour escalation clocks, CSV
+  export).
+- **Tracker integration** (Family circle): status card (ordered → fitting →
+  active), 5-step fitting checklist, honest-boundary note, and the P1
+  **exit-event log** (last-seen, battery, source) feeding the elopement theme
+  and the spike alert's composite confirmation.
+- **Medication reconciliation view** (P2, Medication tab): pharmacist-led
+  cycle card (duplicate-pack tracker), no-splitting + PRN-window directive
+  checkboxes, structured eMAR exception flags, free-text conversion hints,
+  monthly audit CSV export.
+- **Push-to-repo pipeline** (Deploy & sync step 1): real "Push portal to repo"
+  button (`/api/push`, token used once and never stored), fine-grained-PAT
+  guide, `ci.yml` (typecheck + demo-data + identity-marker tripwire),
+  `deploy.yml` (worker deploy), `docs/GITHUB-SETUP.md`, and a
+  **portal-source.zip** download in the Downloads tab.
+- **Storage decision card**: the researched Google-Drive-vs-Cloudflare
+  conclusion (don't glue Drive into the request path; R2 instead) recorded in
+  Deploy & sync + docs.
+- Downloadable sample workbook/CSV/AI-bundle assets regenerated from the
+  sample record so every Downloads link works out of the box.
+
 ## Batch 7 — 06 Sep 2026 (this release)
 
 **Ground-up redesign + Haven 360 (Qwen spec) integration + deployment layer**

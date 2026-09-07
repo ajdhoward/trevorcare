@@ -12,12 +12,13 @@ care-intelligence interface. Dark mode by default, teal palette, mobile-first
 
 | Area | Tabs / features |
 |---|---|
-| **Family hub** | Dual-parent dashboard, family tasks + auto shopping list, calendar (.ics), LPA duties + joint availability, Life360 family circle |
-| **Dad** | Full care record (visits & notes, medication/eMAR, watch items + flag analytics, well-being index, conditions, documents), **"My Day" tablet view** (`/kiosk`) |
+| **Family hub** | Dual-parent dashboard, family tasks + auto shopping list, calendar (.ics), LPA duties + joint availability, Life360 family circle + **Bluetooth tracker card & exit-event log** |
+| **Dad** | Full care record (visits & notes, medication/eMAR + **reconciliation & governance view**, watch items + flag analytics, well-being index, conditions, documents), **"My Day" tablet view** (`/kiosk`) |
 | **Mum** | Care-home oversight: contact log, well-being tracker, escalation ladder, email/phone templates (no portal on the home's side) |
-| **Connect** | WhatsApp groups (Whapi.Cloud) in/out + care inbox, **share links for advisers**, **AI review bridge** with feedback ingest |
+| **Connect** | WhatsApp groups (Whapi.Cloud) in/out + care inbox, **calls & evidence log** (searchable transcripts, highlights, audited copying, contact-spike early warning), **share links for advisers**, **AI review bridge** with feedback ingest |
 | **Intelligence** | AI assistant (multi-provider, incl. zero-key Cloudflare Workers AI), conditions, recommendations |
-| **Oversight & assurance** | Alerts engine + bell, records audit + DQ log, social & comms letters, **local-authority ASC watch**, API & data catalog |
+| **Oversight & assurance** | **Care Hub & legal** (case file, tickable actions, briefings & runbooks, statutory dossier generator with escalation clocks, agency handoff register), alerts engine + bell (incl. the 3×-mean contact-spike rule), records audit + DQ log, social & comms letters, **local-authority ASC watch**, API & data catalog |
+| **Security** | Fail-closed sign-in gate (`/login`), 30-day signed sessions, throttled passwords, header sign-out — set `PORTAL_PASSWORD` + `SESSION_SECRET` (see `.env.example`) |
 
 Everything governance-relevant lands in a hash-chained audit log; RBAC (6
 roles) is enforced per view with lawful-basis notes (UK GDPR / Care Act / MCA).

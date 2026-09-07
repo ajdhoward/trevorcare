@@ -1,0 +1,46 @@
+# Build checks — run on every push and PR. Deploys are handled separately by
+# deploy.yml (AI worker) or Cloudflare Workers Builds. Keep this light so the
+# feedback loop stays fast.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile || bun install
+
+      - name: Generate Prisma client
+        run: bunx prisma generate
+
+      - name: Typecheck
+        run: bunx tsc --noEmit
+
+      - name: Verify demo data present
+        run: |
+          test -f public/data/record.json || (echo "public/data/record.json missing — the portal boots with sample data" && exit 1)
+          test -f public/data/calls.json || (echo "public/data/calls.json missing" && exit 1)
+          test -f public/data/carehub.json || (echo "public/data/carehub.json missing" && exit 1)
+
+      - name: Guard — no real-identity markers in tracked source
+        run: |
+          # The engine ships depersonalised. These checks are a tripwire, not a scanner:
+          # (the workflow excludes itself — the pattern words appear here by definition)
+          if rg -l --hidden -g '!.git' -g '!node_modules' -g '!public/downloads' -g '!.github' "Howard|Ashton Court|ajdhoward|Respectful Care|Mauricare" . ; then
+            echo "::error::Real-identity marker found in tracked files — investigate before merging."
+            exit 1
+          fi
+          echo "No real-identity markers found."
