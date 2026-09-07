@@ -1,0 +1,89 @@
+{
+ "council": {
+  "name": "Local Metropolitan Borough Council — Adult Social Care (ASC) (sample)",
+  "cqcRating": "Good (sample entry — check the council's latest CQC ASC assurance)",
+  "safeguardingPhone": "01632 960004",
+  "safeguardingEmail": "safeguarding@council.example.gov.uk",
+  "complaintsEmail": "complaints@council.example.gov.uk",
+  "complaintsText": "01632 960005",
+  "reportConcernUrl": "https://www.council.example.gov.uk/report-a-concern-about-an-adult",
+  "web": "https://www.council.example.gov.uk"
+ },
+ "policySources": [
+  {
+   "id": "ps-safeguarding",
+   "title": "Council — Report a concern about an adult (sample)",
+   "url": "https://www.council.example.gov.uk/report-a-concern-about-an-adult",
+   "note": "Sample: statutory safeguarding concern route."
+  },
+  {
+   "id": "ps-complaints",
+   "title": "Council — Adult social care complaints (sample)",
+   "url": "https://www.council.example.gov.uk/complaints",
+   "note": "Sample: complaints route incl. escalation to the Local Government & Social Care Ombudsman."
+  }
+ ],
+ "duties": [
+  {
+   "id": "d-s9",
+   "ref": "Care Act 2014 s.9 + s.12",
+   "title": "Needs assessment & review",
+   "requires": "Person-centred assessment; care and support plan kept under review (sample).",
+   "dataKey": "docs",
+   "check": "A current care/support plan exists and is reviewed at least annually."
+  },
+  {
+   "id": "d-s42",
+   "ref": "Care Act 2014 s.42",
+   "title": "Safeguarding enquiry",
+   "requires": "Enquiry where an adult with care needs experiences or is at risk of abuse or neglect (sample).",
+   "dataKey": "flags",
+   "check": "Declined-care/safeguarding patterns are escalated per the ladder."
+  }
+ ],
+ "checks": [
+  {
+   "id": "chk-plan-review",
+   "title": "Care & support plan reviewed within the last 12 months (sample)",
+   "dutyRef": "Care Act s.9(1); MCA best interests",
+   "severity": "high",
+   "dataKey": "docs",
+   "howComputed": "Sample: compares the newest care-plan document date against today."
+  },
+  {
+   "id": "chk-declined-care",
+   "title": "Declined-care pattern escalated (sample)",
+   "dutyRef": "Care Act s.42; MCA consent",
+   "severity": "high",
+   "dataKey": "flags",
+   "howComputed": "Sample: counts refusal-themed flagged notes in the last 30 days against the escalation ladder."
+  }
+ ],
+ "escalationLadder": [
+  {
+   "step": 1,
+   "who": "Care coordinator (provider)",
+   "route": "Visit sheet notes, WhatsApp group, comms log",
+   "when": "Same-week issues: missed visits, small concerns (sample)."
+  },
+  {
+   "step": 2,
+   "who": "Registered manager (provider)",
+   "route": "Email with specifics and dates",
+   "when": "No response or repeat within a month (sample)."
+  },
+  {
+   "step": 3,
+   "who": "Council ASC safeguarding team",
+   "route": "Safeguarding concern form / phone",
+   "when": "Possible abuse/neglect or unresolved provider escalation (sample)."
+  },
+  {
+   "step": 4,
+   "who": "CQC / LGSCO",
+   "route": "Online concern forms",
+   "when": "Regulatory failure or unresolved complaint (sample)."
+  }
+ ],
+ "aiNote": "Sample: replace the council block with your local authority's real, public contact details locally — they are public information but kept generic in this template."
+}

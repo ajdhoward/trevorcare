@@ -1,0 +1,29 @@
+# Copy to .dev.vars for local dev — or let the Deploy to Cloudflare button
+# prompt you for each of these as Worker secrets (nothing below is committed).
+#
+# The AI engine works with ZERO keys via the Workers-AI binding; every key here
+# unlocks an additional capability.
+
+# Shared secret your portal uses to call this worker (set the same value in the
+# portal's AI engine settings → engine mode "worker" → worker key).
+ENGINE_SHARED_KEY=
+
+# Inference provider key — used when the worker forwards to your chosen
+# provider (OpenAI-compatible / Anthropic / Google). Leave empty to use the
+# free Workers-AI binding instead.
+AI_PROVIDER_KEY=
+
+# Optional: pin the provider you want the worker to default to.
+AI_PROVIDER=
+AI_MODEL=
+
+# Whapi.Cloud token — enables sending WhatsApp messages to your bound groups
+# (the "Dad's group" / "Mum's group") straight from the portal.
+WHAPI_TOKEN=
+
+# Optional inbound webhook shared secret — Whapi (or Email Routing) adds it as
+# ?secret= so only genuine sources can write to /api/whapi/webhook.
+WEBHOOK_SECRET=
+
+# Life360 is proxied with per-request credentials from the portal — no server
+# side secret needed.

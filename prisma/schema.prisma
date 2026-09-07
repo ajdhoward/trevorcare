@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Server-side ingestion: WhatsApp group webhook (Whapi.Cloud) + care inbox emails.
+// The webhook POST is stateless and public; the UI polls GET to mirror rows into
+// the client stores. On Cloudflare this maps to D1/KV — see cloudflare-worker/README.
+model InboundMessage {
+  id        String   @id @default(cuid())
+  source    String   // "whatsapp" | "email"
+  groupId   String   @default("")
+  groupName String   @default("")
+  sender    String   @default("")
+  subject   String   @default("")
+  body      String
+  msgId     String   @default("")
+  ts        DateTime @default(now())
+  processed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@unique([source, msgId])
+  @@index([ts])
+}
+
+// Time-boxed, revocable read-only share links — e.g. the family's social worker
+// (the family's social worker) receives a WhatsApp link and sees a read-only care brief
+// without an account. On Cloudflare: D1 table + Turnstile on first view.
+model ShareLink {
+  id           String    @id @default(cuid())
+  token        String    @unique
+  subject      String    // who it was made for ("the family's social worker")
+  scope        String    @default("summary") // "summary" | "detailed"
+  createdAt    DateTime  @default(now())
+  expiresAt    DateTime
+  revoked      Boolean   @default(false)
+  views        Int       @default(0)
+  lastViewedAt DateTime?
+}
+
+// AI feedback loop: an external AI reviews the exported brief and returns
+// structured feedback (JSON blocks). Pasted or uploaded here, stored, then
+// applied into the family stores (tasks / shopping / recommendations).
+model AiFeedback {
+  id        String   @id @default(cuid())
+  source    String   // "paste" | "file" | "api"
+  fileName  String   @default("")
+  title     String   @default("")
+  raw       String   // exact text received (audit copy)
+  items     String   @default("[]") // parsed feedback items (JSON array)
+  status    String   @default("received") // received | applied | dismissed
+  createdAt DateTime @default(now())
+}

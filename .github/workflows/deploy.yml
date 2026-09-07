@@ -1,0 +1,44 @@
+# Deploys the API worker (AI engine + WhatsApp + inbox + share proxies) to
+# Cloudflare on every push to main.
+#
+# One-time setup:
+#   1. Create an API token: dash.cloudflare.com → My Profile → API Tokens
+#      → "Edit Cloudflare Workers" template (adds Workers Scripts:Edit + D1:Edit).
+#   2. Repo → Settings → Secrets and variables → Actions → New repository secret
+#      CLOUDFLARE_API_TOKEN = <token>
+#   3. (Optional) also add CLOUDFLARE_ACCOUNT_ID to skip auto-detection.
+#
+# Prefer the no-code path? Use Cloudflare's own GitHub integration instead:
+# Workers & Pages → your worker → Settings → Build → Connect to Git.
+# See docs/DEPLOYMENT.md for the guided walkthrough.
+
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+    paths: ["cloudflare-worker/**", ".github/workflows/deploy.yml"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install wrangler
+        run: npm install -g wrangler@latest
+
+      - name: Publish worker
+        working-directory: cloudflare-worker
+        run: wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy summary
+        run: echo "Worker deployed — check Workers & Pages in the Cloudflare dashboard for the live URL."

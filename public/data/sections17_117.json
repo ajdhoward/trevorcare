@@ -1,0 +1,31 @@
+{
+ "headline": "Mental Health Act Sections 17/117 cross-reference (sample)",
+ "verdict": "No detention or MHA leave is recorded anywhere in the sample record; the Care Act 2014 and Mental Capacity Act 2005 are the frameworks that apply.",
+ "verdict_label": "No MHA aftercare indicated (sample)",
+ "search_evidence": [
+  "All sample documents and the sample portal data were searched for 'Section 17', 'Section 117' and related terms: zero matches (sample)."
+ ],
+ "s17": {
+  "title": "Section 17 - leave of detained patients",
+  "what": "Sample explanation of s.17 leave.",
+  "relevance": "Sample relevance note.",
+  "watch_for": "Any record of escorted leave from a detained setting."
+ },
+ "s117": {
+  "title": "Section 117 - free aftercare following detention",
+  "what": "Sample explanation of s.117 aftercare.",
+  "relevance": "Sample relevance note.",
+  "watch_for": "Any reference to discharge from a detained setting."
+ },
+ "related_law": [
+  {
+   "title": "Mental Capacity Act 2005 (sample)",
+   "text": "Sample text: the framework that governs day-to-day care where capacity may vary; consent and best-interests records matter."
+  },
+  {
+   "title": "Care Act 2014 (sample)",
+   "text": "Sample text: needs assessment, care and support planning, safeguarding duties."
+  }
+ ],
+ "bottom_line": "Sample bottom line: treat the record as a Care Act domiciliary package; revisit only if MHA evidence appears."
+}

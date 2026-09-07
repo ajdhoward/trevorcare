@@ -1,0 +1,462 @@
+{
+ "generated": "2026-09-07",
+ "total": 49,
+ "themes": {
+  "prn_declines": {
+   "label": "PRN offered & declined",
+   "count": 12,
+   "last30": 3,
+   "prev30": 2,
+   "trend": "flat",
+   "by_month": {
+    "2026-07": 1,
+    "2026-08": 2,
+    "2026-09": 1
+   },
+   "by_call": {
+    "Morning": 3,
+    "Lunch": 2,
+    "Tea": 2,
+    "Bed": 4
+   },
+   "top_carers": [
+    {
+     "name": "Carer A",
+     "n": 4
+    },
+    {
+     "name": "Carer B",
+     "n": 3
+    }
+   ],
+   "examples": [
+    {
+     "date": "2026-09-05",
+     "carer": "Carer A",
+     "notes": "Sample note: Dad was in good spirits, chatted about the garden and had a full breakfast."
+    }
+   ],
+   "rapid_repeats": 2
+  },
+  "food_fluid": {
+   "label": "Food & drink declined",
+   "count": 9,
+   "last30": 2,
+   "prev30": 1,
+   "trend": "flat",
+   "by_month": {
+    "2026-07": 0,
+    "2026-08": 0,
+    "2026-09": 1
+   },
+   "by_call": {
+    "Morning": 2,
+    "Lunch": 1,
+    "Tea": 1,
+    "Bed": 3
+   },
+   "top_carers": [
+    {
+     "name": "Carer A",
+     "n": 3
+    },
+    {
+     "name": "Carer B",
+     "n": 2
+    }
+   ],
+   "examples": [
+    {
+     "date": "2026-09-05",
+     "carer": "Carer A",
+     "notes": "Sample note: Hearing aids were not charged at the evening call; carer placed them on charge."
+    }
+   ],
+   "rapid_repeats": 1
+  },
+  "pain": {
+   "label": "Pain mentioned",
+   "count": 3,
+   "last30": 0,
+   "prev30": 0,
+   "trend": "flat",
+   "by_month": {
+    "2026-07": 0,
+    "2026-08": 1,
+    "2026-09": 0
+   },
+   "by_call": {
+    "Morning": 0,
+    "Lunch": 0,
+    "Tea": 0,
+    "Bed": 1
+   },
+   "top_carers": [
+    {
+     "name": "Carer A",
+     "n": 1
+    },
+    {
+     "name": "Carer B",
+     "n": 1
+    }
+   ],
+   "examples": [
+    {
+     "date": "2026-09-05",
+     "carer": "Carer A",
+     "notes": "Sample note: Declined a full body wash today, accepted a strip wash instead (sample)."
+    }
+   ],
+   "rapid_repeats": 0
+  },
+  "refusals": {
+   "label": "Care declined",
+   "count": 8,
+   "last30": 2,
+   "prev30": 1,
+   "trend": "flat",
+   "by_month": {
+    "2026-07": 1,
+    "2026-08": 0,
+    "2026-09": 0
+   },
+   "by_call": {
+    "Morning": 2,
+    "Lunch": 1,
+    "Tea": 1,
+    "Bed": 2
+   },
+   "top_carers": [
+    {
+     "name": "Carer A",
+     "n": 2
+    },
+    {
+     "name": "Carer B",
+     "n": 2
+    }
+   ],
+   "examples": [
+    {
+     "date": "2026-09-05",
+     "carer": "Carer A",
+     "notes": "Sample note: Took all medication with the dosette box; carer observed administration."
+    }
+   ],
+   "rapid_repeats": 1
+  },
+  "hearing": {
+   "label": "Hearing-aid issues",
+   "count": 7,
+   "last30": 1,
+   "prev30": 1,
+   "trend": "flat",
+   "by_month": {
+    "2026-07": 1,
+    "2026-08": 0,
+    "2026-09": 1
+   },
+   "by_call": {
+    "Morning": 1,
+    "Lunch": 1,
+    "Tea": 1,
+    "Bed": 2
+   },
+   "top_carers": [
+    {
+     "name": "Carer A",
+     "n": 2
+    },
+    {
+     "name": "Carer B",
+     "n": 1
+    }
+   ],
+   "examples": [
+    {
+     "date": "2026-09-05",
+     "carer": "Carer A",
+     "notes": "Sample note: Lunch prepared and most of it eaten; offered a drink before the carer left."
+    }
+   ],
+   "rapid_repeats": 1
+  },
+  "confusion": {
+   "label": "Confusion or disorientation",
+   "count": 4,
+   "last30": 1,
+   "prev30": 0,
+   "trend": "flat",
+   "by_month": {
+    "2026-07": 0,
+    "2026-08": 1,
+    "2026-09": 0
+   },
+   "by_call": {
+    "Morning": 1,
+    "Lunch": 0,
+    "Tea": 0,
+    "Bed": 1
+   },
+   "top_carers": [
+    {
+     "name": "Carer A",
+     "n": 1
+    },
+    {
+     "name": "Carer B",
+     "n": 1
+    }
+   ],
+   "examples": [
+    {
+     "date": "2026-09-05",
+     "carer": "Carer A",
+     "notes": "Sample note: Confused about the time of day on arrival, reassured and settled quickly (sample)."
+    }
+   ],
+   "rapid_repeats": 0
+  },
+  "falls": {
+   "label": "Falls or near-misses",
+   "count": 1,
+   "last30": 0,
+   "prev30": 0,
+   "trend": "flat",
+   "by_month": {
+    "2026-07": 0,
+    "2026-08": 1,
+    "2026-09": 0
+   },
+   "by_call": {
+    "Morning": 0,
+    "Lunch": 0,
+    "Tea": 0,
+    "Bed": 0
+   },
+   "top_carers": [
+    {
+     "name": "Carer A",
+     "n": 1
+    },
+    {
+     "name": "Carer B",
+     "n": 1
+    }
+   ],
+   "examples": [
+    {
+     "date": "2026-09-05",
+     "carer": "Carer A",
+     "notes": "Sample note: Laundry done and put away; bins taken round (sample visit note)."
+    }
+   ],
+   "rapid_repeats": 0
+  },
+  "sleep": {
+   "label": "Sleep disturbance",
+   "count": 2,
+   "last30": 0,
+   "prev30": 0,
+   "trend": "flat",
+   "by_month": {
+    "2026-07": 0,
+    "2026-08": 1,
+    "2026-09": 0
+   },
+   "by_call": {
+    "Morning": 0,
+    "Lunch": 0,
+    "Tea": 0,
+    "Bed": 0
+   },
+   "top_carers": [
+    {
+     "name": "Carer A",
+     "n": 1
+    },
+    {
+     "name": "Carer B",
+     "n": 1
+    }
+   ],
+   "examples": [
+    {
+     "date": "2026-09-05",
+     "carer": "Carer A",
+     "notes": "Sample note: Dad was in good spirits, chatted about the garden and had a full breakfast."
+    }
+   ],
+   "rapid_repeats": 0
+  },
+  "skin_stockings": {
+   "label": "Skin & stockings",
+   "count": 3,
+   "last30": 0,
+   "prev30": 0,
+   "trend": "flat",
+   "by_month": {
+    "2026-07": 1,
+    "2026-08": 0,
+    "2026-09": 0
+   },
+   "by_call": {
+    "Morning": 0,
+    "Lunch": 0,
+    "Tea": 0,
+    "Bed": 1
+   },
+   "top_carers": [
+    {
+     "name": "Carer A",
+     "n": 1
+    },
+    {
+     "name": "Carer B",
+     "n": 1
+    }
+   ],
+   "examples": [
+    {
+     "date": "2026-09-05",
+     "carer": "Carer A",
+     "notes": "Sample note: Hearing aids were not charged at the evening call; carer placed them on charge."
+    }
+   ],
+   "rapid_repeats": 0
+  },
+  "hospital": {
+   "label": "Hospital",
+   "count": 0,
+   "last30": 0,
+   "prev30": 0,
+   "trend": "flat",
+   "by_month": {
+    "2026-07": 0,
+    "2026-08": 0,
+    "2026-09": 1
+   },
+   "by_call": {
+    "Morning": 0,
+    "Lunch": 0,
+    "Tea": 0,
+    "Bed": 0
+   },
+   "top_carers": [
+    {
+     "name": "Carer A",
+     "n": 1
+    },
+    {
+     "name": "Carer B",
+     "n": 1
+    }
+   ],
+   "examples": [
+    {
+     "date": "2026-09-05",
+     "carer": "Carer A",
+     "notes": "Sample note: Declined a full body wash today, accepted a strip wash instead (sample)."
+    }
+   ],
+   "rapid_repeats": 0
+  }
+ },
+ "theme_order": [
+  "prn_declines",
+  "food_fluid",
+  "pain",
+  "refusals",
+  "hearing",
+  "confusion",
+  "falls",
+  "sleep",
+  "skin_stockings",
+  "hospital"
+ ],
+ "matrix": {
+  "prn_declines": {
+   "2026-07": 1,
+   "2026-08": 2,
+   "2026-09": 1
+  },
+  "food_fluid": {
+   "2026-07": 0,
+   "2026-08": 0,
+   "2026-09": 1
+  },
+  "pain": {
+   "2026-07": 0,
+   "2026-08": 1,
+   "2026-09": 0
+  },
+  "refusals": {
+   "2026-07": 1,
+   "2026-08": 0,
+   "2026-09": 0
+  },
+  "hearing": {
+   "2026-07": 1,
+   "2026-08": 0,
+   "2026-09": 1
+  },
+  "confusion": {
+   "2026-07": 0,
+   "2026-08": 1,
+   "2026-09": 0
+  },
+  "falls": {
+   "2026-07": 0,
+   "2026-08": 1,
+   "2026-09": 0
+  },
+  "sleep": {
+   "2026-07": 0,
+   "2026-08": 1,
+   "2026-09": 0
+  },
+  "skin_stockings": {
+   "2026-07": 1,
+   "2026-08": 0,
+   "2026-09": 0
+  },
+  "hospital": {
+   "2026-07": 0,
+   "2026-08": 0,
+   "2026-09": 1
+  }
+ },
+ "months": [
+  "2026-07",
+  "2026-08",
+  "2026-09"
+ ],
+ "clusters": [
+  {
+   "theme": "hearing",
+   "label": "Hearing-aid issues",
+   "start": "2026-08-29",
+   "end": "2026-09-01",
+   "n": 3
+  }
+ ],
+ "cooccur": [
+  {
+   "a": "prn_declines",
+   "b": "refusals",
+   "n": 4
+  },
+  {
+   "a": "hearing",
+   "b": "sleep",
+   "n": 2
+  }
+ ],
+ "by_call": {
+  "Bed": 14,
+  "Tea": 11,
+  "Lunch": 9,
+  "Morning": 12
+ }
+}

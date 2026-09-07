@@ -1,0 +1,1067 @@
+{
+ "generated": "2026-09-07",
+ "client": {
+  "name": "Dad (sample)",
+  "dob": "1947-01-01",
+  "allergies": "None known",
+  "pharmacy": "the local pharmacy",
+  "gp": "the GP surgery",
+  "knownAs": "Dad",
+  "address": "1 Sample Road, Market Town AB1 2CD",
+  "contacts": [
+   {
+    "contactType": "Next of Kin 1",
+    "name": "Alex (son, sample)",
+    "relationship": "Son",
+    "address": "",
+    "postcode": "",
+    "telNo1": "07700 900000",
+    "telNo2": ""
+   },
+   {
+    "contactType": "Next of Kin 2",
+    "name": "Contact A",
+    "relationship": "Niece-in-law",
+    "address": "",
+    "postcode": "",
+    "telNo1": "07700 900001",
+    "telNo2": ""
+   },
+   {
+    "contactType": "GP",
+    "name": "the GP surgery",
+    "relationship": "",
+    "address": "",
+    "postcode": "",
+    "telNo1": "01632 960001",
+    "telNo2": ""
+   }
+  ]
+ },
+ "hist": [
+  {
+   "date": "2026-09-05",
+   "times": "06:55 07:25",
+   "carer": "Carer A",
+   "status": "Completed",
+   "actual": "06:55 07:25",
+   "sin": "06:55",
+   "sout": "07:25",
+   "ain": "06:55",
+   "aout": "07:25",
+   "notes": "Sample note: Dad was in good spirits, chatted about the garden and had a full breakfast.",
+   "tlist": "Medication, Personal Care, Domestic / Laundry",
+   "tasks": [
+    {
+     "c": "Personal Care",
+     "n": "Breakfast Call",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    },
+    {
+     "c": "Personal Care",
+     "n": "Personal Care - Full Body Wash",
+     "s": "Not Completed",
+     "no": "Declined (sample)",
+     "a": "",
+     "an": "",
+     "ad": ""
+    },
+    {
+     "c": "Personal Care",
+     "n": "Prompt Medication",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ],
+   "meds": [
+    {
+     "n": "Amlodipine",
+     "d": "1 x 5mg",
+     "s": "Given / Complete",
+     "no": "",
+     "tk": "2026-09-06 07:10",
+     "p": false,
+     "w": "",
+     "lim": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    },
+    {
+     "n": "Atorvastatin",
+     "d": "1 x 40mg",
+     "s": "Given / Complete",
+     "no": "",
+     "tk": "2026-09-06 07:10",
+     "p": false,
+     "w": "",
+     "lim": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ]
+  },
+  {
+   "date": "2026-09-05",
+   "times": "13:05 13:35",
+   "carer": "Carer B",
+   "status": "Completed",
+   "actual": "13:05 13:35",
+   "sin": "13:05",
+   "sout": "13:35",
+   "ain": "13:05",
+   "aout": "13:35",
+   "notes": "Sample note: Lunch prepared and most of it eaten; offered a drink before the carer left.",
+   "tlist": "Medication, Personal Care, Domestic / Laundry",
+   "tasks": [
+    {
+     "c": "Personal Care",
+     "n": "Prepare Food Of Choice",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    },
+    {
+     "c": "Personal Care",
+     "n": "Domestic / Laundry",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ],
+   "meds": [
+    {
+     "n": "Paracetamol",
+     "d": "1 x 1g",
+     "s": "Given / Complete",
+     "no": "Offered, accepted (sample)",
+     "tk": "2026-09-06 07:10",
+     "p": true,
+     "w": "",
+     "lim": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ]
+  },
+  {
+   "date": "2026-09-05",
+   "times": "16:50 17:20",
+   "carer": "Carer A",
+   "status": "Completed",
+   "actual": "16:50 17:20",
+   "sin": "16:50",
+   "sout": "17:20",
+   "ain": "16:50",
+   "aout": "17:20",
+   "notes": "",
+   "tlist": "Medication, Personal Care, Domestic / Laundry",
+   "tasks": [],
+   "meds": []
+  },
+  {
+   "date": "2026-09-05",
+   "times": "20:55 21:25",
+   "carer": "Carer C",
+   "status": "Completed",
+   "actual": "20:55 21:25",
+   "sin": "20:55",
+   "sout": "21:25",
+   "ain": "20:55",
+   "aout": "21:25",
+   "notes": "Sample note: Hearing aids were not charged at the evening call; carer placed them on charge.",
+   "tlist": "Medication, Personal Care, Domestic / Laundry",
+   "tasks": [
+    {
+     "c": "Personal Care",
+     "n": "Bed Call",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    },
+    {
+     "c": "Personal Care",
+     "n": "Support Into Nightwear",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ],
+   "meds": [
+    {
+     "n": "Amlodipine",
+     "d": "1 x 5mg",
+     "s": "Given / Complete",
+     "no": "",
+     "tk": "2026-09-06 07:10",
+     "p": false,
+     "w": "",
+     "lim": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ]
+  },
+  {
+   "date": "2026-09-06",
+   "times": "06:55 07:25",
+   "carer": "Carer B",
+   "status": "Completed",
+   "actual": "06:55 07:25",
+   "sin": "06:55",
+   "sout": "07:25",
+   "ain": "06:55",
+   "aout": "07:25",
+   "notes": "",
+   "tlist": "Medication, Personal Care, Domestic / Laundry",
+   "tasks": [
+    {
+     "c": "Personal Care",
+     "n": "Breakfast Call",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    },
+    {
+     "c": "Personal Care",
+     "n": "Prompt Medication",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ],
+   "meds": [
+    {
+     "n": "Atorvastatin",
+     "d": "1 x 40mg",
+     "s": "Given / Complete",
+     "no": "",
+     "tk": "2026-09-06 07:10",
+     "p": false,
+     "w": "",
+     "lim": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ]
+  },
+  {
+   "date": "2026-09-06",
+   "times": "13:05 13:35",
+   "carer": "Carer A",
+   "status": "Cancelled",
+   "actual": "",
+   "sin": "13:05",
+   "sout": "13:35",
+   "ain": "",
+   "aout": "",
+   "notes": "",
+   "tlist": "Medication, Personal Care, Domestic / Laundry",
+   "tasks": [],
+   "meds": []
+  },
+  {
+   "date": "2026-09-06",
+   "times": "16:50 17:20",
+   "carer": "Carer C",
+   "status": "Completed",
+   "actual": "16:50 17:20",
+   "sin": "16:50",
+   "sout": "17:20",
+   "ain": "16:50",
+   "aout": "17:20",
+   "notes": "Sample note: Confused about the time of day on arrival, reassured and settled quickly (sample).",
+   "tlist": "Medication, Personal Care, Domestic / Laundry",
+   "tasks": [
+    {
+     "c": "Personal Care",
+     "n": "Prepare Drink Of Choice",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ],
+   "meds": [
+    {
+     "n": "Paracetamol",
+     "d": "1 x 1g",
+     "s": "Given / Complete",
+     "no": "",
+     "tk": "2026-09-06 07:10",
+     "p": true,
+     "w": "",
+     "lim": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ]
+  },
+  {
+   "date": "2026-09-06",
+   "times": "20:55 21:25",
+   "carer": "Carer B",
+   "status": "Completed",
+   "actual": "20:55 21:25",
+   "sin": "20:55",
+   "sout": "21:25",
+   "ain": "20:55",
+   "aout": "21:25",
+   "notes": "Sample note: Declined a full body wash today, accepted a strip wash instead (sample).",
+   "tlist": "Medication, Personal Care, Domestic / Laundry",
+   "tasks": [
+    {
+     "c": "Personal Care",
+     "n": "Bed Call",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    },
+    {
+     "c": "Personal Care",
+     "n": "Personal Care - Strip Wash",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ],
+   "meds": []
+  },
+  {
+   "date": "2026-09-07",
+   "times": "06:55 07:25",
+   "carer": "Carer A",
+   "status": "Waiting",
+   "actual": "",
+   "sin": "06:55",
+   "sout": "07:25",
+   "ain": "",
+   "aout": "",
+   "notes": "",
+   "tlist": "Medication, Personal Care, Domestic / Laundry",
+   "tasks": [
+    {
+     "c": "Personal Care",
+     "n": "Breakfast Call",
+     "s": "Complete",
+     "no": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ],
+   "meds": [
+    {
+     "n": "Amlodipine",
+     "d": "1 x 5mg",
+     "s": "Given / Complete",
+     "no": "",
+     "tk": "2026-09-06 07:10",
+     "p": false,
+     "w": "",
+     "lim": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    },
+    {
+     "n": "Atorvastatin",
+     "d": "1 x 40mg",
+     "s": "Given / Complete",
+     "no": "",
+     "tk": "2026-09-06 07:10",
+     "p": false,
+     "w": "",
+     "lim": "",
+     "a": "",
+     "an": "",
+     "ad": ""
+    }
+   ]
+  },
+  {
+   "date": "2026-09-07",
+   "times": "13:05 13:35",
+   "carer": "Carer C",
+   "status": "Waiting",
+   "actual": "",
+   "sin": "13:05",
+   "sout": "13:35",
+   "ain": "",
+   "aout": "",
+   "notes": "",
+   "tlist": "Medication, Personal Care, Domestic / Laundry",
+   "tasks": [],
+   "meds": []
+  }
+ ],
+ "upcoming": [
+  {
+   "date": "2026-09-08",
+   "times": "06:55 07:25",
+   "carer": "Carer A",
+   "run": "R1",
+   "status": "Scheduled"
+  },
+  {
+   "date": "2026-09-08",
+   "times": "13:05 13:35",
+   "carer": "Carer B",
+   "run": "R1",
+   "status": "Scheduled"
+  },
+  {
+   "date": "2026-09-08",
+   "times": "16:50 17:20",
+   "carer": "Carer A",
+   "run": "R1",
+   "status": "Scheduled"
+  },
+  {
+   "date": "2026-09-08",
+   "times": "20:55 21:25",
+   "carer": "Carer A",
+   "run": "R1",
+   "status": "Scheduled"
+  }
+ ],
+ "med_daily": [
+  {
+   "date": "2026-08-25",
+   "given": 5,
+   "total": 5,
+   "prn_given": 1,
+   "prn_not": 1,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-08-26",
+   "given": 5,
+   "total": 5,
+   "prn_given": 1,
+   "prn_not": 0,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-08-27",
+   "given": 4,
+   "total": 4,
+   "prn_given": 1,
+   "prn_not": 1,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-08-28",
+   "given": 3,
+   "total": 4,
+   "prn_given": 0,
+   "prn_not": 1,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-08-29",
+   "given": 4,
+   "total": 4,
+   "prn_given": 0,
+   "prn_not": 0,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-08-30",
+   "given": 3,
+   "total": 3,
+   "prn_given": 1,
+   "prn_not": 1,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-08-31",
+   "given": 5,
+   "total": 5,
+   "prn_given": 1,
+   "prn_not": 0,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-09-01",
+   "given": 3,
+   "total": 3,
+   "prn_given": 1,
+   "prn_not": 0,
+   "cancelled": 1
+  },
+  {
+   "date": "2026-09-02",
+   "given": 2,
+   "total": 3,
+   "prn_given": 0,
+   "prn_not": 0,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-09-03",
+   "given": 4,
+   "total": 4,
+   "prn_given": 1,
+   "prn_not": 0,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-09-04",
+   "given": 5,
+   "total": 5,
+   "prn_given": 0,
+   "prn_not": 1,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-09-05",
+   "given": 4,
+   "total": 4,
+   "prn_given": 1,
+   "prn_not": 0,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-09-06",
+   "given": 4,
+   "total": 4,
+   "prn_given": 0,
+   "prn_not": 0,
+   "cancelled": 0
+  },
+  {
+   "date": "2026-09-07",
+   "given": 2,
+   "total": 3,
+   "prn_given": 0,
+   "prn_not": 1,
+   "cancelled": 0
+  }
+ ],
+ "med_events": [
+  {
+   "date": "2026-08-26",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-26",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer C",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-26",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-27",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer C",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-27",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-27",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-28",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-28",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer C",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-28",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-29",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-29",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-29",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer C",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-30",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-30",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-30",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-31",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-31",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-08-31",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer A",
+   "comments": "Declined (sample)",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-01",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-01",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer C",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-01",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-02",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-02",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-02",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-03",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-03",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-03",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer C",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-04",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-04",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-04",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-05",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer C",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-05",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer C",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-05",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-06",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer C",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-06",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-06",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-07",
+   "med": "Amlodipine",
+   "slot": "Morning",
+   "carer": "Carer A",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-07",
+   "med": "Atorvastatin",
+   "slot": "Lunch",
+   "carer": "Carer B",
+   "comments": "",
+   "action": "",
+   "actionBy": ""
+  },
+  {
+   "date": "2026-09-07",
+   "med": "Paracetamol",
+   "slot": "Tea",
+   "carer": "Carer B",
+   "comments": "Declined (sample)",
+   "action": "",
+   "actionBy": ""
+  }
+ ],
+ "carers": [
+  [
+   "Carer A",
+   6
+  ],
+  [
+   "Carer B",
+   4
+  ],
+  [
+   "Carer C",
+   3
+  ],
+  [
+   "",
+   1
+  ]
+ ],
+ "flags": [
+  {
+   "date": "2026-09-05",
+   "times": "20:55 21:25",
+   "carer": "Carer C",
+   "kw": [
+    "hearing"
+   ],
+   "notes": "Sample note: Hearing aids were not charged at the evening call; carer placed them on charge."
+  },
+  {
+   "date": "2026-09-04",
+   "times": "06:55 07:25",
+   "carer": "Carer A",
+   "kw": [
+    "prn_declines"
+   ],
+   "notes": "Sample note: Declined a full body wash today, accepted a strip wash instead (sample)."
+  },
+  {
+   "date": "2026-09-02",
+   "times": "13:05 13:35",
+   "carer": "Carer B",
+   "kw": [
+    "confusion"
+   ],
+   "notes": "Sample note: Confused about the time of day on arrival, reassured and settled quickly (sample)."
+  },
+  {
+   "date": "2026-08-30",
+   "times": "16:50 17:20",
+   "carer": "Carer C",
+   "kw": [
+    "food_fluid"
+   ],
+   "notes": "Sample note: ate about half of the tea; will monitor tomorrow."
+  },
+  {
+   "date": "2026-08-27",
+   "times": "06:55 07:25",
+   "carer": "Carer A",
+   "kw": [
+    "sleep"
+   ],
+   "notes": "Sample note: slept well, awake and dressed on arrival."
+  }
+ ],
+ "meds": [
+  {
+   "name": "Amlodipine",
+   "dose": "1 x 5mg",
+   "freq": "Once daily",
+   "prn": false,
+   "form": "Tablet",
+   "directions": "In the morning with water (sample)",
+   "risks": ""
+  },
+  {
+   "name": "Atorvastatin",
+   "dose": "1 x 40mg",
+   "freq": "Once daily at night",
+   "prn": false,
+   "form": "Tablet",
+   "directions": "At night (sample)",
+   "risks": ""
+  },
+  {
+   "name": "Paracetamol",
+   "dose": "1 x 1g",
+   "freq": "As required, max 4 in 24h",
+   "prn": true,
+   "form": "Tablet",
+   "directions": "For pain or discomfort (sample)",
+   "risks": ""
+  }
+ ],
+ "absences": [
+  {
+   "from": "2026-08-26 13:05",
+   "to": "2026-08-26 13:35",
+   "reason": "Client Cancellation"
+  }
+ ],
+ "package": [
+  {
+   "packageId": 10001,
+   "startDay": "Monday",
+   "endDay": "Sunday",
+   "times": "06:55 - 07:25",
+   "duration": 30,
+   "packageStartDate": "2025-10-06T00:00:00",
+   "packageEndDate": "2099-12-31T00:00:00",
+   "tasks": "Personal Care, Medication, Domestic support (sample)"
+  },
+  {
+   "packageId": 10002,
+   "startDay": "Monday",
+   "endDay": "Sunday",
+   "times": "13:05 - 13:35",
+   "duration": 30,
+   "packageStartDate": "2025-10-06T00:00:00",
+   "packageEndDate": "2099-12-31T00:00:00",
+   "tasks": "Personal Care, Medication, Domestic support (sample)"
+  },
+  {
+   "packageId": 10003,
+   "startDay": "Monday",
+   "endDay": "Sunday",
+   "times": "16:50 - 17:20",
+   "duration": 30,
+   "packageStartDate": "2025-10-06T00:00:00",
+   "packageEndDate": "2099-12-31T00:00:00",
+   "tasks": "Personal Care, Medication, Domestic support (sample)"
+  },
+  {
+   "packageId": 10004,
+   "startDay": "Monday",
+   "endDay": "Sunday",
+   "times": "20:55 - 21:25",
+   "duration": 30,
+   "packageStartDate": "2025-10-06T00:00:00",
+   "packageEndDate": "2099-12-31T00:00:00",
+   "tasks": "Personal Care, Medication, Domestic support (sample)"
+  }
+ ]
+}

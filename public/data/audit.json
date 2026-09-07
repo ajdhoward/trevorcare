@@ -1,0 +1,151 @@
+{
+ "generated": "2026-09-07",
+ "provenance": {
+  "portal": "Sample care-portal export (care-portal.example.com) — schema-true synthetic data",
+  "account": "Sample family-portal account · client id 000 (Dad (sample))",
+  "pulled": "2026-09-07 (sample: 10 visits, 30 task outcomes, 39 eMAR rows)",
+  "headline_answer": "Every value in the sample dataset is synthetic. In a real deployment this section documents which portal endpoints produced each field.",
+  "fields": [
+   {
+    "field": "Next of kin (sample)",
+    "source": "GET /api/client/contacts/000",
+    "verbatim": null,
+    "note": "Sample: shows how provenance for the contacts field is documented, including discrepancies."
+   },
+   {
+    "field": "Visits, carer notes, task & medication outcomes (sample)",
+    "source": "GET /api/client/visits/000/{date} · /api/carer/callDoneNotes/{callId}",
+    "verbatim": null,
+    "note": "Sample: one row per visit with joined note text."
+   },
+   {
+    "field": "Medication list & administration (sample)",
+    "source": "GET /api/client/meds/000 · POST /api/medication/emars",
+    "verbatim": null,
+    "note": "Sample: dose-level administration rows with gap warnings."
+   }
+  ],
+  "api_scope": {
+   "question": "Is the API able to access information that isn't shown in the portal UI?",
+   "answer": "Sample answer: partly — raw fields (IDs, entry logistics, medication limits) exist beyond the UI, while admin/audit data sits behind staff roles.",
+   "extra_you_can_get": [
+    "Internal identifiers (callID, refNo)",
+    "Keysafe & entry-method logistics (sample)",
+    "Medication 'do-not-give-before' limits (sample)"
+   ],
+   "not_exposed_to_family_role": [
+    "Any edit/audit history for profile fields (sample)",
+    "Carer-side data: shifts, wages (sample)",
+    "Other clients' records (sample)"
+   ]
+  }
+ },
+ "change_attribution": {
+  "question": "Can you see who requested that information (e.g. next of kin) was changed?",
+  "answer": "Sample answer: no change history is exposed to the family role; only login audit events are available.",
+  "routes": [
+   "Ask the agency office in writing for the change history (sample)",
+   "Submit a Subject Access Request (UK GDPR Art 15) (sample)",
+   "Request rectification (UK GDPR Art 16) via the letter generator (sample)"
+  ]
+ },
+ "alex": {
+  "question": "Is the family admin mentioned anywhere in the portal record? (sample)",
+  "answer": "Sample: the family admin appears in carer notes as the contact for updates but is missing from the contacts list — a common data-quality finding to watch for.",
+  "in_contacts": false,
+  "mentions_in_notes": 3,
+  "quotes": [
+   {
+    "date": "2026-09-05",
+    "note": "Sample note: phoned son to confirm medication change.",
+    "callId": "sample-1",
+    "carerId": "c-1"
+   },
+   {
+    "date": "2026-09-01",
+    "note": "Sample note: son asked for extra tea visit, agreed.",
+    "callId": "sample-2",
+    "carerId": "c-2"
+   }
+  ]
+ },
+ "alzheimer": {
+  "question": "Do the data suggest a diagnosis the record never names? (sample)",
+  "short_answer": "Sample: strong indirect signals (memory-clinic visits, cognitive-impairment risk lines) with no named diagnosis — the classic 'established-but-unrecorded' gap.",
+  "diagnosis_named_in_record": null,
+  "signals": [
+   {
+    "type": "Medication",
+    "weight": "Strong",
+    "detail": "Sample: a dementia-specific medication on the active list.",
+    "source": "GET /api/client/meds/000"
+   },
+   {
+    "type": "Care event",
+    "weight": "Strong",
+    "detail": "Sample: notes record a memory-clinic nurse visit at home.",
+    "source": "Carer notes"
+   },
+   {
+    "type": "Risk assessment",
+    "weight": "Mixed",
+    "detail": "Sample: cognitive-impairment entries rated LOW despite strong signals.",
+    "source": "ALL RISK ASSESSMENTS (sample)"
+   }
+  ],
+  "note_quotes": {
+   "memory_clinic": [],
+   "dementia_nurse": [],
+   "confusion": []
+  },
+  "med_spans": {
+   "memantine": null,
+   "risperidone": null
+  },
+  "verdict": "Sample verdict: treat a missing-but-implied diagnosis as a records-quality issue; chase written confirmation and a dementia care plan.",
+  "staff_awareness": [
+   "Sample: staff facilitated memory-clinic involvement (partial awareness).",
+   "Sample: no dementia-specific care strategy appears in notes."
+  ],
+  "actions": [
+   "Ask the GP to confirm diagnosis and stage in writing (sample)",
+   "Ask the agency to re-rate the cognitive-impairment risk assessment (sample)",
+   "Request a dementia care plan and staff briefing (sample)"
+  ]
+ },
+ "incorrect_info": [
+  {
+   "id": "DQ-1",
+   "item": "Next of kin is wrong (sample)",
+   "severity": "High",
+   "recorded": "GET /api/client/contacts/000 (sample)",
+   "reality": "Sample: the family admin should be the primary next of kin but is absent from the list.",
+   "status": "Rectification letter available (UK GDPR Art 16)",
+   "actions": [
+    "Send a rectification request naming the correct next of kin (sample)"
+   ]
+  },
+  {
+   "id": "DQ-2",
+   "item": "Implied diagnosis missing from the record (sample)",
+   "severity": "High",
+   "recorded": "Medical history says only 'memory issues' (sample)",
+   "reality": "Sample: medication and care events corroborate a diagnosis the record never names.",
+   "status": "GP confirmation requested via letter template",
+   "actions": [
+    "GP letter to confirm diagnosis/stage (sample)"
+   ]
+  },
+  {
+   "id": "DQ-3",
+   "item": "Communication-log endpoint returned another client's entry (sample)",
+   "severity": "Medium",
+   "recorded": "GET /api/client/logs/000 (sample)",
+   "reality": "Sample: data-contamination finding — the portal's communication log cannot be trusted as complete.",
+   "status": "Raised with the agency; keep the family-side log",
+   "actions": [
+    "Report the data-integrity issue (sample)"
+   ]
+  }
+ ]
+}

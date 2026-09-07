@@ -1,0 +1,18 @@
+{
+  // Care Record AI Engine — Cloudflare Worker configuration
+  // Deploy:  npx wrangler login && npx wrangler deploy
+  "name": "care-record-ai-engine",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-09-01",
+  "workers_dev": true,
+  // Zero-key inference on Cloudflare's own models:
+  "ai": {
+    "binding": "AI"
+  },
+  // Optional shared-secret gate (recommended once you deploy publicly):
+  //   npx wrangler secret put ENGINE_SHARED_KEY
+  // then paste the same value into the interface's AI assistant settings.
+  "observability": {
+    "enabled": true
+  }
+}

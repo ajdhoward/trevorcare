@@ -1,0 +1,71 @@
+[
+ {
+  "id": "rec-medication-audit",
+  "title": "Review PRN administration patterns monthly (sample)",
+  "category": "Medication safety",
+  "priority": "High",
+  "rationale": "Sample rationale: PRN offers and declines should be reviewed monthly against the care plan.",
+  "actions": [
+   "Export the eMAR extract",
+   "Count PRN offers vs declines",
+   "Raise patterns with the GP"
+  ],
+  "evidence_refs": [
+   "eMAR (sample)"
+  ],
+  "links": [
+   "medication"
+  ]
+ },
+ {
+  "id": "rec-hearing",
+  "title": "Add a hearing-aid charging check to every evening call (sample)",
+  "category": "Daily living",
+  "priority": "High",
+  "rationale": "Sample rationale: several sample notes mention hearing aids not charged.",
+  "actions": [
+   "Ask the agency to add the task",
+   "Check it appears on the visit sheet"
+  ],
+  "evidence_refs": [
+   "Visits & notes (sample)"
+  ],
+  "links": [
+   "watchlist"
+  ]
+ },
+ {
+  "id": "rec-continuity",
+  "title": "Request continuity of carers for morning calls (sample)",
+  "category": "Continuity",
+  "priority": "Medium",
+  "rationale": "Sample rationale: familiar carers reduce anxiety and confusion episodes.",
+  "actions": [
+   "Raise at the next care review",
+   "Log the response in Social & comms"
+  ],
+  "evidence_refs": [
+   "Visits (sample)"
+  ],
+  "links": [
+   "schedule"
+  ]
+ },
+ {
+  "id": "rec-care-plan",
+  "title": "Keep the care plan review date visible on the dashboard (sample)",
+  "category": "Governance",
+  "priority": "Medium",
+  "rationale": "Sample rationale: annual review duties under the Care Act should be tracked.",
+  "actions": [
+   "Diarise the review",
+   "Attach the newest plan in Documents"
+  ],
+  "evidence_refs": [
+   "Documents (sample)"
+  ],
+  "links": [
+   "documents"
+  ]
+ }
+]

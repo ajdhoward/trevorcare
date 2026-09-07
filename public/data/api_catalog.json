@@ -1,0 +1,221 @@
+{
+ "generated": "2026-09-07",
+ "verdict": {
+  "question": "Do any of the APIs have the ability to send or edit information?",
+  "short_answer": "Sample: every endpoint reachable with the family-portal token is read-only; write workflows belong to carer/office roles.",
+  "detail": [
+   {
+    "endpoint": "/api/medication/emars?clientId=000",
+    "verb": "POST",
+    "body": "{} (empty)",
+    "classification": "Sample: query disguised as POST — changes nothing."
+   }
+  ],
+  "consequence": "Sample: to correct the record, ask a human (agency office, GP) or use the UK GDPR Art. 16 route documented in the audit."
+ },
+ "sensitivity_classes": [
+  {
+   "k": "public",
+   "label": "Operational",
+   "desc": "Visit schedule, package, task names, counters — low harm if shared with the wider care team."
+  },
+  {
+   "k": "health",
+   "label": "Health & medication",
+   "desc": "Meds, doses, eMAR, allergies, conditions, well-being index — Care Act / GDPR Art. 9 special-category data."
+  },
+  {
+   "k": "personal",
+   "label": "Personal & sensitive",
+   "desc": "Carer notes, flagged notes, contacts, addresses, next-of-kin — highest care in sharing."
+  },
+  {
+   "k": "internal",
+   "label": "Agency internal",
+   "desc": "Runs, staff IDs, agency service endpoints — not part of the family record; treated as out of scope."
+  }
+ ],
+ "endpoint_groups": [
+  {
+   "group": "Verified usable with family token (read-only)",
+   "endpoints": [
+    {
+     "endpoint": "/api/client/visits/000/{dateISO}",
+     "verb": "GET",
+     "purpose": "Visits for the week containing the date",
+     "fields": "sample field list",
+     "rows": "sample",
+     "snapshot": "sample",
+     "shown_in": [
+      "Overview"
+     ],
+     "sensitivity": "operational",
+     "write": "No",
+     "status": "usable",
+     "note": ""
+    },
+    {
+     "endpoint": "/api/client/visit/{callID}/tasks",
+     "verb": "GET",
+     "purpose": "Visit details — every task & med row of one visit",
+     "fields": "sample field list",
+     "rows": "sample",
+     "snapshot": "sample",
+     "shown_in": [
+      "Overview"
+     ],
+     "sensitivity": "health",
+     "write": "No",
+     "status": "usable",
+     "note": ""
+    },
+    {
+     "endpoint": "/api/carer/callDoneNotes/{callID}",
+     "verb": "GET",
+     "purpose": "The carer's written visit note",
+     "fields": "sample field list",
+     "rows": "sample",
+     "snapshot": "sample",
+     "shown_in": [
+      "Overview"
+     ],
+     "sensitivity": "personal",
+     "write": "No",
+     "status": "usable",
+     "note": ""
+    },
+    {
+     "endpoint": "/api/medication/emars?clientId=000&startDate=",
+     "verb": "POST {}",
+     "purpose": "eMAR administration window (30 days per call)",
+     "fields": "sample field list",
+     "rows": "sample",
+     "snapshot": "sample",
+     "shown_in": [
+      "Overview"
+     ],
+     "sensitivity": "health",
+     "write": "No (query-only POST)",
+     "status": "usable",
+     "note": ""
+    },
+    {
+     "endpoint": "/api/client/meds/000",
+     "verb": "GET",
+     "purpose": "Current medication list",
+     "fields": "sample field list",
+     "rows": "sample",
+     "snapshot": "sample",
+     "shown_in": [
+      "Overview"
+     ],
+     "sensitivity": "health",
+     "write": "No",
+     "status": "usable",
+     "note": ""
+    },
+    {
+     "endpoint": "/api/client/contacts/000",
+     "verb": "GET",
+     "purpose": "Next-of-kin & contact list",
+     "fields": "sample field list",
+     "rows": "sample",
+     "snapshot": "sample",
+     "shown_in": [
+      "Overview"
+     ],
+     "sensitivity": "personal",
+     "write": "No",
+     "status": "usable",
+     "note": ""
+    },
+    {
+     "endpoint": "/api/client/package/000",
+     "verb": "GET",
+     "purpose": "Care-package weekly schedule",
+     "fields": "sample field list",
+     "rows": "sample",
+     "snapshot": "sample",
+     "shown_in": [
+      "Overview"
+     ],
+     "sensitivity": "operational",
+     "write": "No",
+     "status": "usable",
+     "note": ""
+    }
+   ]
+  },
+  {
+   "group": "Discovered — blocked, write-capable, or not yet pulled",
+   "endpoints": [
+    {
+     "endpoint": "/api/outcome/visit/taskDetails",
+     "verb": "POST",
+     "purpose": "Add task detail (carer workflow)",
+     "fields": "sample field list",
+     "rows": "sample",
+     "snapshot": "sample",
+     "shown_in": [
+      "Overview"
+     ],
+     "sensitivity": "health",
+     "write": "WRITE — denied for family role",
+     "status": "usable",
+     "note": ""
+    }
+   ]
+  },
+  {
+   "group": "Other service families in the platform (not reachable)",
+   "services": [
+    {
+     "family": "/api/account/*",
+     "desc": "Sample: user accounts, roles, permissions management (admin app)."
+    },
+    {
+     "family": "/api/carer/*",
+     "desc": "Sample: carer profile, shifts, messages, write workflows."
+    },
+    {
+     "family": "/api/oncall/*",
+     "desc": "Sample: on-call alerts, inbox, unallocated visits."
+    }
+   ]
+  }
+ ],
+ "coverage": {
+  "interface_datasets": [
+   {
+    "file": "record.json",
+    "from": "visits + tasks + notes + meds + emars + package + absences + contacts (sample)",
+    "rows": "10 visits · 39 med events · 5 flagged notes",
+    "tabs": "all core tabs"
+   },
+   {
+    "file": "wellbeing.json",
+    "from": "derived: visits, tasks, eMAR, flags per day (sample)",
+    "rows": "60 daily scores + monthly roll-up",
+    "tabs": "Well-being, Overview"
+   },
+   {
+    "file": "flags_analytics.json",
+    "from": "derived: flagged notes → themes (sample)",
+    "rows": "49 flagged notes in 10 themes",
+    "tabs": "Watch items"
+   }
+  ],
+  "not_exposed_to_family_role": [
+   "Per-task outcome editing (carer role) (sample)",
+   "Office/admin user & role management (sample)"
+  ],
+  "api_vs_ui": {
+   "summary": "Sample: the API returns more than the UI shows, but nothing secret beyond it.",
+   "api_only_fields": [
+    "callID / carer1ID (internal identifiers, sample)",
+    "keysafe & entryMethod per visit (sample)"
+   ],
+   "admin_audit_data": "None reachable with the family role (sample)."
+  }
+ }
+}

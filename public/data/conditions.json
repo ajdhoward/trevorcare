@@ -1,0 +1,82 @@
+[
+ {
+  "id": "hearing_loss",
+  "name": "Hearing loss",
+  "category": "Sensory",
+  "source": "recorded",
+  "source_note": "Sample: 'hard of hearing' is recorded in the medical history line.",
+  "desc": "Sample condition entry describing how hearing loss affects daily care routines and communication.",
+  "meds": [],
+  "evidence": 7,
+  "links": [
+   "watchlist"
+  ],
+  "triggers": "Carer notes about hearing aids not charged or TV volume very high.",
+  "staff": "Face the person, speak clearly, check hearing aids are on charge at every call.",
+  "comfort": "Regular retube and review appointments; note hearing-aid maintenance in the log.",
+  "docs": [
+   "Care plan (sample)"
+  ]
+ },
+ {
+  "id": "memory_memory",
+  "name": "Memory issues",
+  "category": "Cognitive",
+  "source": "recorded",
+  "source_note": "Sample: recorded in the portal medical history line.",
+  "desc": "Sample entry: memory issues mean routines, orientation cues and consistent carers matter.",
+  "meds": [],
+  "evidence": 5,
+  "links": [
+   "watchlist",
+   "kiosk"
+  ],
+  "triggers": "Notes describing confusion about time, place or recent events.",
+  "staff": "Use orientation strategies, keep routines consistent, explain every step.",
+  "comfort": "Dementia-friendly activities; involve the memory clinic/team as applicable.",
+  "docs": [
+   "Care plan (sample)",
+   "Risk assessments (sample)"
+  ]
+ },
+ {
+  "id": "anxiety",
+  "name": "Anxiety",
+  "category": "Mental health",
+  "source": "recorded",
+  "source_note": "Sample: recorded in the medical history line.",
+  "desc": "Sample entry describing anxiety around care interactions and at night.",
+  "meds": [],
+  "evidence": 4,
+  "links": [
+   "watchlist"
+  ],
+  "triggers": "Unfamiliar carers, rushed calls, night-time disorientation.",
+  "staff": "Announce arrival, take time, keep the same visit order.",
+  "comfort": "Calm evening routine; log what helps so the whole team can use it.",
+  "docs": [
+   "Care plan (sample)"
+  ]
+ },
+ {
+  "id": "arthritis_knee",
+  "name": "Osteoarthritis (knee)",
+  "category": "Musculoskeletal",
+  "source": "recorded",
+  "source_note": "Sample: recorded in the medical history line.",
+  "desc": "Sample entry: knee osteoarthritis affects mobility and transfers; watch for pain signals.",
+  "meds": [
+   "Paracetamol (sample)"
+  ],
+  "evidence": 3,
+  "links": [
+   "medication"
+  ],
+  "triggers": "Notes mentioning knee pain or difficulty on stairs.",
+  "staff": "Allow extra time for moves, use agreed transfer technique.",
+  "comfort": "Prompt PRN analgesia as prescribed; report escalating pain.",
+  "docs": [
+   "Risk assessments (sample)"
+  ]
+ }
+]
