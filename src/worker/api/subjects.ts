@@ -1,7 +1,11 @@
-// Service-user registry — ported 1:1 from src/app/api/subjects/route.ts.
-// GET lists subjects (seeding the fictional demo subjects on first call);
-// POST adds a subject — the "add a service user" wizard's target.
-// Same JSON shapes as the Next.js original so client code is unchanged.
+// Service-user registry — ported 1:1 from src/app/api/subjects/route.ts (C1)
+// and src/app/api/subjects/[id]/route.ts (C2).
+// GET /api/subjects lists subjects (seeding the fictional demo subjects on
+// first call); POST adds a subject; GET/PATCH/DELETE /api/subjects/:id update,
+// archive (soft delete) or hard-delete (cascade vault/facts/finance/research).
+// Same JSON shapes as the Next.js originals so client code is unchanged.
+// Parity note: Prisma update/delete on a missing row throws (Next → HTTP 500);
+// here we check existence and throw into the router's catch, which also 500s.
 
 import { route, type Handler } from "../router";
 import { cuid, fail, json, nowIso } from "../util";
@@ -123,7 +127,92 @@ const createSubject: Handler = async (ctx) => {
   return json({ ok: true, subject: row ? toSubject(row) : { id } }, 201);
 };
 
+// ---------------------------------------------------------------------------
+// Per-subject routes — ported from src/app/api/subjects/[id]/route.ts
+// ---------------------------------------------------------------------------
+
+/** camelCase body field → snake_case column (PATCH partial update). */
+const SUBJECT_FIELD_COLUMNS: Record<string, string> = {
+  displayName: "display_name",
+  relationship: "relationship",
+  setting: "setting",
+  dateOfBirth: "date_of_birth",
+  nhsNumber: "nhs_number",
+  address: "address",
+  phone: "phone",
+};
+
+const getSubject: Handler = async (ctx) => {
+  const row = await ctx.env.DB.prepare("SELECT * FROM care_subjects WHERE id = ?")
+    .bind(ctx.params.id)
+    .first<SubjectRow>();
+  if (!row) return json({ ok: false, error: "Not found" }, 404);
+  return json({ ok: true, subject: toSubject(row) });
+};
+
+const patchSubject: Handler = async (ctx) => {
+  const DB = ctx.env.DB;
+  const id = ctx.params.id;
+  const body = (await ctx.req.json().catch(() => ({}))) as Record<string, unknown>;
+  // Prisma throws on update of a missing row (Next responds 500) — mirror it.
+  const existing = await DB.prepare("SELECT * FROM care_subjects WHERE id = ?").bind(id).first<SubjectRow>();
+  if (!existing) throw new Error("Not found");
+
+  const sets: string[] = [];
+  const vals: unknown[] = [];
+  for (const k of ["displayName", "relationship", "setting", "dateOfBirth", "nhsNumber", "address", "phone"] as const) {
+    if (typeof body[k] === "string") {
+      sets.push(`${SUBJECT_FIELD_COLUMNS[k]} = ?`);
+      vals.push((body[k] as string).slice(0, 200));
+    }
+  }
+  if (typeof body.archived === "boolean") {
+    sets.push("archived = ?");
+    vals.push(body.archived ? 1 : 0);
+  }
+  if (body.profile && typeof body.profile === "object") {
+    sets.push("profile = ?");
+    vals.push(JSON.stringify(body.profile));
+  }
+  sets.push("updated_at = ?");
+  vals.push(nowIso());
+
+  await DB.prepare(`UPDATE care_subjects SET ${sets.join(", ")} WHERE id = ?`)
+    .bind(...vals, id)
+    .run();
+  const row = await DB.prepare("SELECT * FROM care_subjects WHERE id = ?").bind(id).first<SubjectRow>();
+  return json({ ok: true, subject: row ? toSubject(row) : null });
+};
+
+const deleteSubject: Handler = async (ctx) => {
+  const DB = ctx.env.DB;
+  const id = ctx.params.id;
+  const existing = await DB.prepare("SELECT * FROM care_subjects WHERE id = ?").bind(id).first<SubjectRow>();
+  if (!existing) throw new Error("Not found"); // Prisma delete on missing row throws → 500
+
+  const hard = ctx.url.searchParams.get("hard") === "1";
+  if (hard) {
+    // D1 batch ≈ db.$transaction([...]) — all-or-nothing cascade.
+    await DB.batch([
+      DB.prepare("DELETE FROM vault_documents WHERE subject_id = ?").bind(id),
+      DB.prepare("DELETE FROM extracted_facts WHERE subject_id = ?").bind(id),
+      DB.prepare("DELETE FROM finance_entries WHERE subject_id = ?").bind(id),
+      DB.prepare("DELETE FROM research_runs WHERE subject_id = ?").bind(id),
+      DB.prepare("DELETE FROM care_subjects WHERE id = ?").bind(id),
+    ]);
+    return json({ ok: true, archived: false, deleted: true });
+  }
+  await DB.prepare("UPDATE care_subjects SET archived = 1, updated_at = ? WHERE id = ?")
+    .bind(nowIso(), id)
+    .run();
+  const row = await DB.prepare("SELECT * FROM care_subjects WHERE id = ?").bind(id).first<SubjectRow>();
+  return json({ ok: true, subject: row ? toSubject(row) : null, archived: true });
+};
+
 export function registerSubjectRoutes(routeFn: typeof route): void {
   routeFn("GET", "/api/subjects", listSubjectsHandler);
   routeFn("POST", "/api/subjects", createSubject);
+  routeFn("GET", "/api/subjects/:id", getSubject);
+  routeFn("PATCH", "/api/subjects/:id", patchSubject);
+  routeFn("DELETE", "/api/subjects/:id", deleteSubject);
 }

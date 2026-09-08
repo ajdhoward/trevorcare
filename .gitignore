@@ -47,7 +47,6 @@ local-*
 *.log
 dev.log
 dev.out.log
-test
 prompt
 
 server.log
@@ -59,10 +58,12 @@ server.log
 /public/downloads/*
 !/public/downloads/.gitkeep
 /workspace_extract/
-/scripts/
 /worklog.md
 /.ai/
 /dev.vars
 .dev.vars
 *.db
 /db/
+
+# Wrangler local dev state (D1/KV/R2 simulators, bundles)
+.wrangler/

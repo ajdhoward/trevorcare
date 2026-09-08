@@ -7,7 +7,8 @@ export interface Env {
   CONSENT: KVNamespace;
   RATE_LIMIT: KVNamespace;
   DOCUMENTS: R2Bucket;
-  AI: Ai;
+  /** Remote binding — absent under `wrangler dev --local`; all call sites guard. */
+  AI?: Ai;
   /** Absent on the $0 plan (Queues need Workers Paid) — ingest degrades to direct. */
   WHAPI_QUEUE?: Queue<Record<string, unknown>>;
   ASSETS: Fetcher;
@@ -17,6 +18,13 @@ export interface Env {
   SESSION_SECRET?: string;
   AI_GATEWAY_ID?: string;
   PORTAL_NAME?: string;
+  /** PIM OAuth apps (optional — the connect flows are inactive until set). */
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
+  APPLE_CLIENT_ID?: string;
+  APPLE_CLIENT_SECRET?: string;
+  MICROSOFT_CLIENT_ID?: string;
+  MICROSOFT_CLIENT_SECRET?: string;
 }
 
 export interface RequestContext {
