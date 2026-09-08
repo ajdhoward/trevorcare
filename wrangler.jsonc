@@ -1,0 +1,46 @@
+{
+  // Trevorcare — whole portal on Cloudflare Workers.
+  // Static Next.js export (out/) + one Worker for /api/*, cron, email, queue.
+  //
+  // NOTE: no hardcoded database_id / KV ids — resources auto-provision on
+  // first deploy (wrangler v4 provisioning / Deploy-to-Cloudflare button).
+  // queue bindings need the $5 Workers plan; on the $0 plan remove the
+  // "queues" block — the Worker degrades to direct ingest when the binding
+  // is absent.
+  "name": "trevorcare",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-09-08",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./out/",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "trevorcare", "migrations_dir": "migrations" }
+  ],
+  "kv_namespaces": [
+    { "binding": "CONSENT" },
+    { "binding": "RATE_LIMIT" }
+  ],
+  "r2_buckets": [
+    { "binding": "DOCUMENTS", "bucket_name": "trevorcare-docs" }
+  ],
+  "ai": { "binding": "AI" },
+  "queues": {
+    "producers": [{ "binding": "WHAPI_QUEUE", "queue": "whapi-ingest" }],
+    "consumers": [{ "queue": "whapi-ingest", "max_batch_size": 10, "max_batch_timeout": 5 }]
+  },
+  "triggers": {
+    "crons": ["0 8 * * *", "0 20 * * *"]
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "vars": {
+    "AI_GATEWAY_ID": "",
+    "PORTAL_NAME": "Trevorcare"
+  }
+}
