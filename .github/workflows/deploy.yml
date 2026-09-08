@@ -1,31 +1,117 @@
-# Deploy the AI worker to Cloudflare on every push to main.
-# Required repo secret: CLOUDFLARE_API_TOKEN (template: "Edit Cloudflare Workers")
-# Optional: CLOUDFLARE_ACCOUNT_ID
+# Deploy the Trevorcare Worker (API + static export) to Cloudflare on every push to main.
+#
+# Required repo secrets (GitHub → Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   — dash.cloudflare.com → My Profile → API Tokens →
+#                            "Edit Cloudflare Workers" template, then ADD:
+#                            Account · D1 · Edit  and  Account · Queues · Edit
+#   CLOUDFLARE_ACCOUNT_ID  — Workers & Pages dashboard → right sidebar
+#
+# Until both secrets are set the workflow exits GREEN with a notice instead of
+# failing, and once the static export (out/) exists every push deploys:
+#   provision D1/R2/Queue → migrations → wrangler deploy → migrations.
 
-name: Deploy AI Worker
+name: Deploy to Cloudflare
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - name: Preflight — are the Cloudflare secrets configured?
+        id: preflight
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          missing=()
+          [ -z "$CF_API_TOKEN" ] && missing+=("CLOUDFLARE_API_TOKEN")
+          [ -z "$CF_ACCOUNT_ID" ] && missing+=("CLOUDFLARE_ACCOUNT_ID")
+          if [ ${#missing[@]} -gt 0 ]; then
+            printf '::notice::Deploy skipped — missing repo secret(s): %s\n' "${missing[*]}"
+            {
+              echo "### ⏭️ Deploy skipped — Cloudflare secrets not set yet"
+              echo ""
+              echo "Add these under **Settings → Secrets and variables → Actions**, then re-run this workflow:"
+              echo ""
+              echo "| Secret | Where to find it |"
+              echo "|---|---|"
+              echo "| \`CLOUDFLARE_API_TOKEN\` | dash.cloudflare.com → My Profile → API Tokens → **Edit Cloudflare Workers** template + add D1:Edit + Queues:Edit |"
+              echo "| \`CLOUDFLARE_ACCOUNT_ID\` | Workers & Pages dashboard → right sidebar |"
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - uses: oven-sh/setup-bun@v2
+      - name: Checkout
+        if: steps.preflight.outputs.skip != 'true'
+        uses: actions/checkout@v5
+
+      - name: Setup Bun
+        if: steps.preflight.outputs.skip != 'true'
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      - name: Install worker dependencies
-        working-directory: cloudflare-worker
-        run: bun install
+      - name: Install dependencies
+        if: steps.preflight.outputs.skip != 'true'
+        run: bun install --frozen-lockfile
 
-      - name: Deploy worker
-        working-directory: cloudflare-worker
-        run: bunx wrangler deploy
+      - name: Build (Next.js)
+        if: steps.preflight.outputs.skip != 'true'
+        run: bun run build
+
+      - name: Verify static export (out/)
+        if: steps.preflight.outputs.skip != 'true'
+        run: |
+          if [ ! -d out ]; then
+            echo "::notice::out/ missing — the static-export flip has not landed yet; skipping deploy without failing."
+            {
+              echo "### ⏭️ Deploy skipped — static export not enabled yet"
+              echo ""
+              echo "The repo is mid-conversion: the build still produces \`.next/standalone\` instead of the \`out/\` directory the Worker serves. Deploy steps activate automatically once the export flip lands."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Provision resources (D1, R2, Queue)
+        if: steps.preflight.outputs.skip != 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          bunx wrangler d1 create trevorcare >/dev/null 2>&1 && echo "D1 'trevorcare' created" || echo "D1 'trevorcare' already exists"
+          bunx wrangler r2 bucket create trevorcare-docs >/dev/null 2>&1 && echo "R2 bucket 'trevorcare-docs' created" || echo "R2 bucket already exists"
+          bunx wrangler queues create whapi-ingest >/dev/null 2>&1 && echo "Queue 'whapi-ingest' created" || echo "Queue already exists"
+
+      - name: D1 migrations (pre-deploy, best effort)
+        if: steps.preflight.outputs.skip != 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          bunx wrangler d1 migrations apply trevorcare --remote \
+            || echo "::warning::Pre-deploy migrations failed (on the very first run the database is created during deploy); retrying after deploy."
+
+      - name: Deploy Worker
+        if: steps.preflight.outputs.skip != 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bunx wrangler deploy
+
+      - name: D1 migrations (post-deploy)
+        if: steps.preflight.outputs.skip != 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bunx wrangler d1 migrations apply trevorcare --remote

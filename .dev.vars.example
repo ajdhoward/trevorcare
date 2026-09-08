@@ -1,0 +1,17 @@
+# Copy to .dev.vars for local `wrangler dev` — never commit .dev.vars.
+#
+# Everything except WHAPI_TOKEN is optional: ENGINE_SHARED_KEY, AUDIT_HMAC_KEY
+# and WEBHOOK_SECRET auto-generate on first run (crypto.getRandomValues) and
+# persist in the D1 app_secrets table. See docs/DEPLOYMENT.md.
+
+# Legacy portal password (omit in production — set it as a Worker secret instead)
+PORTAL_PASSWORD=demo
+
+# Cookie-signing secret (empty = auto-generated)
+SESSION_SECRET=
+
+# WhatsApp inbox token (the only secret that is ever entered manually)
+WHAPI_TOKEN=
+
+# Display name shown in the portal header
+PORTAL_NAME=Trevorcare
