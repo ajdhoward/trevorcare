@@ -15,7 +15,7 @@ interface D1PreparedStatement {
   all<T = Record<string, unknown>>(): Promise<D1Result<T[]>>;
 }
 interface D1Result<T> {
-  results?: T[];
+  results?: T;
   success: boolean;
   meta?: Record<string, unknown>;
 }
